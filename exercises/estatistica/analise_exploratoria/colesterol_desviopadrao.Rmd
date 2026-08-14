@@ -1,0 +1,28 @@
+```{r, echo = FALSE, results = "hide"}
+n <- sample(5:7, 1)
+media_alvo <- sample(190:210, 1)
+valores <- round(media_alvo + rnorm(n, 0, 15))
+dp <- round(sd(valores), 2)
+media <- round(mean(valores), 1)
+```
+
+Question
+========
+Em um ambulatório, foram medidos os níveis de colesterol total (mg/dL) de
+`r n` pacientes em jejum: `r paste(valores, collapse = ", ")`.
+
+Calcule o desvio padrão amostral desses valores (arredonde para 2 casas decimais).
+
+Solution
+========
+A média é `r media` mg/dL. O desvio padrão amostral é calculado como
+$s = \sqrt{\frac{\sum (x_i - \bar{x})^2}{n-1}}$, resultando em
+$s = `r dp`$ mg/dL.
+
+Meta-information
+================
+exname: desvio_padrao_colesterol
+extype: num
+exsolution: `r dp`
+extol: 0.05
+exsection: Estatistica/AnaliseExploratoria

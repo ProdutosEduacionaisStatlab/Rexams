@@ -1,0 +1,42 @@
+```{r, echo = FALSE, results = "hide"}
+r2 <- sample(c(0.15, 0.42, 0.68, 0.85), 1)
+pct <- round(r2 * 100)
+```
+
+Question
+========
+Um pesquisador ajustou um modelo de regressão linear simples para
+avaliar a relação entre a idade de pacientes e o nível de creatinina
+sérica, obtendo um coeficiente de determinação $R^2 = `r r2`$.
+Qual a interpretação correta desse resultado?
+
+Answerlist
+----------
+* `r pct`% da variação na idade dos pacientes é explicada pela creatinina.
+* `r pct`% da variação no nível de creatinina sérica é explicada pela idade, segundo o modelo ajustado.
+* O modelo prevê corretamente a creatinina em `r pct`% dos pacientes.
+* Existe uma relação de causa e efeito entre idade e creatinina, com força de `r pct`%.
+
+Solution
+========
+O $R^2$ representa a proporção da variabilidade da variável **resposta**
+(no caso, a creatinina sérica) que é explicada pela variável
+**explicativa** (idade) no modelo de regressão ajustado. Ele não indica
+percentual de acerto de previsões individuais, nem estabelece causalidade
+por si só — apenas o quanto do modelo linear ajustado explica a
+variação observada.
+
+Answerlist
+----------
+* Incorreto: o $R^2$ se refere à variação explicada na variável resposta (creatinina), não na explicativa (idade).
+* Correto: essa é a interpretação padrão do coeficiente de determinação.
+* Incorreto: $R^2$ não é uma taxa de acerto de classificação/previsão individual.
+* Incorreto: associação estatística (mesmo que forte) não comprova causalidade.
+
+Meta-information
+================
+exname: interpretacao_r2
+extype: schoice
+exsolution: 0100
+exshuffle: TRUE
+exsection: Estatistica/Regressao

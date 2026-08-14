@@ -1,0 +1,42 @@
+```{r, echo = FALSE, results = "hide"}
+p_valor <- sample(c(0.001, 0.003, 0.02, 0.04), 1)
+alfa <- 0.05
+significativo <- p_valor < alfa
+```
+
+Question
+========
+Em um ensaio clínico randomizado comparando um novo anti-hipertensivo a
+placebo, o teste de hipótese para diferença de médias na pressão arterial
+sistólica resultou em um valor-p = `r p_valor`, com nível de significância
+$\alpha = 0{,}05$ pré-estabelecido. Qual a interpretação correta?
+
+Answerlist
+----------
+* O valor-p indica a probabilidade de o medicamento ser eficaz.
+* Como o valor-p `r ifelse(significativo, "é menor", "não é menor")` que $\alpha$, `r ifelse(significativo, "rejeita-se", "não se rejeita")` a hipótese nula de que não há diferença entre os grupos.
+* O valor-p mostra o tamanho do efeito clínico do medicamento.
+* Um valor-p pequeno prova que o medicamento causa a redução da pressão.
+
+Solution
+========
+O valor-p é a probabilidade de observar um resultado tão ou mais extremo
+quanto o obtido, assumindo que a hipótese nula (não há diferença entre os
+grupos) é verdadeira — ele não mede probabilidade de eficácia, tamanho de
+efeito, nem prova causalidade. Compara-se o valor-p a $\alpha$ para decidir
+sobre rejeitar ou não a hipótese nula.
+
+Answerlist
+----------
+* Incorreto: valor-p não é a probabilidade de a hipótese alternativa ser verdadeira.
+* Correto: essa é a interpretação estatisticamente adequada do valor-p frente a $\alpha$.
+* Incorreto: valor-p não mede magnitude/tamanho de efeito.
+* Incorreto: significância estatística não implica causalidade comprovada.
+
+Meta-information
+================
+exname: interpretacao_pvalor
+extype: schoice
+exsolution: 0100
+exshuffle: TRUE
+exsection: Estatistica/Inferencia

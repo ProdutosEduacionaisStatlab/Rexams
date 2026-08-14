@@ -1,0 +1,16 @@
+# R
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+
+# Saídas geradas (não versionar provas geradas)
+output/
+*.zip
+*.pdf
+!exercises/**/*.pdf
+
+# Sistema
+.DS_Store
+Thumbs.db

@@ -1,0 +1,35 @@
+```{r, echo = FALSE, results = "hide"}
+a <- sample(2:20, 1)
+b <- sample(2:20, 1)
+resultado <- a + b
+```
+
+Question
+========
+Calcule o resultado da soma entre `r a` e `r b`.
+
+Answerlist
+----------
+* `r resultado - 2`
+* `r resultado`
+* `r resultado + 3`
+* `r resultado + 5`
+
+Solution
+========
+A soma de `r a` com `r b` é igual a `r resultado`.
+
+Answerlist
+----------
+* Incorreto.
+* Correto! `r a` + `r b` = `r resultado`.
+* Incorreto.
+* Incorreto.
+
+Meta-information
+================
+exname: soma_dois_numeros
+extype: schoice
+exsolution: 0100
+exshuffle: TRUE
+exsection: Matematica/Facil

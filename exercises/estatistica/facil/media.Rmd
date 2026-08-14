@@ -1,0 +1,20 @@
+```{r, echo = FALSE, results = "hide"}
+vals <- sample(1:30, 4)
+media <- round(mean(vals), 2)
+```
+
+Question
+========
+Considere os valores `r paste(vals, collapse = ", ")`. Qual é a média aritmética desse conjunto?
+
+Solution
+========
+A média é a soma dos valores dividida pela quantidade: $(`r paste(vals, collapse = " + ")`) / `r length(vals)` = `r media`$.
+
+Meta-information
+================
+exname: media_aritmetica
+extype: num
+exsolution: `r media`
+extol: 0.05
+exsection: Estatistica/Facil

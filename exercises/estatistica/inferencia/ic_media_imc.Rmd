@@ -1,0 +1,34 @@
+```{r, echo = FALSE, results = "hide"}
+n <- sample(36:64, 1)
+media <- round(sample(220:280, 1) / 10, 1)
+dp <- round(sample(30:55, 1) / 10, 1)
+erro_padrao <- dp / sqrt(n)
+ic_inferior <- round(media - 1.96 * erro_padrao, 2)
+ic_superior <- round(media + 1.96 * erro_padrao, 2)
+```
+
+Question
+========
+Em uma amostra aleatória de `r n` pacientes adultos de uma clínica, o Índice
+de Massa Corporal (IMC) médio foi `r media` kg/m², com desvio padrão de
+`r dp` kg/m². Assumindo que a amostra é grande o suficiente para usar a
+aproximação normal, calcule o **limite inferior** do intervalo de confiança
+de 95% para a média populacional do IMC (use $z = 1{,}96$; arredonde para
+2 casas decimais).
+
+Solution
+========
+O erro padrão da média é $EP = s / \sqrt{n} = `r dp` / \sqrt{`r n`} = `r round(erro_padrao, 3)`$.
+
+O limite inferior do IC 95% é dado por
+$\bar{x} - 1{,}96 \times EP = `r media` - 1{,}96 \times `r round(erro_padrao, 3)` = `r ic_inferior`$ kg/m².
+
+(O limite superior seria `r ic_superior` kg/m².)
+
+Meta-information
+================
+exname: ic_media_imc
+extype: num
+exsolution: `r ic_inferior`
+extol: 0.1
+exsection: Estatistica/Inferencia

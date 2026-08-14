@@ -1,0 +1,22 @@
+```{r, echo = FALSE, results = "hide"}
+x_sol <- sample(2:12, 1)
+a <- sample(2:9, 1)
+b <- sample(1:15, 1)
+c <- a * x_sol + b
+```
+
+Question
+========
+Resolva a equação $`r a`x + `r b` = `r c`$ e informe o valor de $x$.
+
+Solution
+========
+Isolando $x$: $x = (`r c` - `r b`) / `r a` = `r x_sol`$.
+
+Meta-information
+================
+exname: equacao_primeiro_grau
+extype: num
+exsolution: `r x_sol`
+extol: 0
+exsection: Matematica/Dificil

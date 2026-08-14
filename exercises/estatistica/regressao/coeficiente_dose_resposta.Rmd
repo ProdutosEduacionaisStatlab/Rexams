@@ -1,0 +1,38 @@
+```{r, echo = FALSE, results = "hide"}
+dose <- c(5, 10, 15, 20, 25)
+beta1_true <- sample(2:5, 1)
+beta0_true <- sample(60:80, 1)
+resposta <- round(beta0_true + beta1_true * dose + rnorm(5, 0, 3), 1)
+modelo <- lm(resposta ~ dose)
+coef_dose <- round(coef(modelo)[2], 2)
+```
+
+Question
+========
+Um estudo farmacológico avaliou a redução da pressão arterial diastólica
+(mmHg) em função da dose de um medicamento (mg), obtendo os seguintes
+pares dose–resposta:
+
+Dose (mg): `r paste(dose, collapse = ", ")`
+
+Redução da PA diastólica (mmHg): `r paste(resposta, collapse = ", ")`
+
+Ajustando um modelo de regressão linear simples (Resposta = $\beta_0$ +
+$\beta_1$ × Dose), qual é o valor estimado do coeficiente angular
+$\beta_1$ (arredonde para 2 casas decimais)?
+
+Solution
+========
+Ajustando o modelo de regressão linear pelo método dos mínimos quadrados,
+o coeficiente angular estimado é $\hat{\beta}_1 = `r coef_dose`$ mmHg por
+mg de dose, ou seja, a cada aumento de 1 mg na dose, espera-se uma
+redução adicional de aproximadamente `r coef_dose` mmHg na pressão
+diastólica, dentro da faixa de doses estudada.
+
+Meta-information
+================
+exname: coeficiente_regressao_dose
+extype: num
+exsolution: `r coef_dose`
+extol: 0.3
+exsection: Estatistica/Regressao

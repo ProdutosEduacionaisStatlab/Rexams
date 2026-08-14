@@ -1,0 +1,47 @@
+```{r, echo = FALSE, results = "hide"}
+contextos <- list(
+  list(variavel = "tempo de internação (dias)", cauda = "direita",
+       fato = "poucos pacientes permanecem internados por muito mais tempo que a maioria"),
+  list(variavel = "dose diária de um medicamento (mg)", cauda = "direita",
+       fato = "a maior parte dos pacientes usa doses baixas, mas alguns poucos usam doses muito altas"),
+  list(variavel = "idade ao diagnóstico de uma doença rara (anos)", cauda = "esquerda",
+       fato = "a maioria dos casos é diagnosticada em idade avançada, com poucos casos em pacientes jovens")
+)
+sorteado <- contextos[[sample(1:length(contextos), 1)]]
+```
+
+Question
+========
+Em um estudo clínico, observou-se que, para a variável **`r sorteado$variavel`**,
+`r sorteado$fato`. Um histograma dessa variável apresentaria uma cauda mais
+alongada para qual lado, e como se classifica essa distribuição quanto à
+assimetria?
+
+Answerlist
+----------
+* Cauda à esquerda; distribuição assimétrica negativa (à esquerda).
+* Cauda à direita; distribuição assimétrica positiva (à direita).
+* Sem cauda alongada; distribuição perfeitamente simétrica.
+* A forma do histograma não permite avaliar assimetria.
+
+Solution
+========
+Quando poucos valores extremos "puxam" a distribuição para valores altos,
+a cauda mais longa fica à direita e a distribuição é chamada de assimétrica
+positiva (à direita). O caso contrário (poucos valores extremos baixos)
+gera assimetria negativa (à esquerda), com cauda à esquerda.
+
+Answerlist
+----------
+* `r ifelse(sorteado$cauda == "esquerda", "Correto.", "Incorreto.")`
+* `r ifelse(sorteado$cauda == "direita", "Correto.", "Incorreto.")`
+* Incorreto, distribuições com valores extremos não são simétricas.
+* Incorreto, o formato do histograma é justamente a principal ferramenta para isso.
+
+Meta-information
+================
+exname: assimetria_distribuicao
+extype: schoice
+exsolution: `r ifelse(sorteado$cauda == "esquerda", "1000", "0100")`
+exshuffle: TRUE
+exsection: Estatistica/AnaliseExploratoria
