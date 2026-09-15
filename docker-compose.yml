@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  gerador-provas:
+    build: 
+      context: .
+      dockerfile: deploy/Dockerfile
+    container_name: rexams-web
+    ports:
+      - "3838:3838"
+    volumes:
+      # Sincroniza a pasta local com o caminho exato dentro do container
+      - ./exercises:/srv/shiny-server/rexams-web/exercises
+    restart: unless-stopped
