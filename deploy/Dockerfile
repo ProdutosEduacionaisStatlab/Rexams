@@ -1,21 +1,26 @@
-# Imagem base com R + Shiny Server já configurados
+# 1. Imagem base oficial com R e Shiny Server
 FROM rocker/shiny:4.4.1
 
-# LaTeX (necessário para exams2pdf) e Pandoc (necessário para exams2html)
+# 2. Instalação de ferramentas do sistema (LaTeX, Pandoc e Zip)
 RUN apt-get update && apt-get install -y \
     texlive-latex-base \
     texlive-latex-extra \
     texlive-fonts-recommended \
     pandoc \
+    zip \
     && rm -rf /var/lib/apt/lists/*
 
-# Pacotes R do projeto
-COPY packages.R /tmp/packages.R
-RUN Rscript /tmp/packages.R
+# 3. Instalação dos pacotes do R diretamente
+RUN R -e "install.packages(c('exams', 'rmarkdown', 'knitr'), repos='https://cloud.r-project.org/')"
 
-# Copia o app para a pasta padrão do Shiny Server
-COPY . /srv/shiny-server/rexams-web
+# 4. Limpa o aplicativo padrão da imagem
+RUN rm -rf /srv/shiny-server/*
+
+# 5. Copia os arquivos do projeto para a subpasta rexams-web
+COPY ./ /srv/shiny-server/rexams-web
+
+# 6. Ajusta as permissões para o servidor conseguir gerar os PDFs
+RUN chown -R shiny:shiny /srv/shiny-server
 
 EXPOSE 3838
-
 CMD ["/usr/bin/shiny-server"]
