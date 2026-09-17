@@ -3,31 +3,36 @@ source("R/helpers.R")
 
 ui <- fluidPage(
   titlePanel("Gerador de Provas Automáticas — R/Exams"),
-
+  
   sidebarLayout(
     sidebarPanel(
       selectInput("disciplina", "1. Disciplina:",
                   choices = list_disciplinas()),
-
-      uiOutput("dificuldade_ui"),
-
+      
+      uiOutput("tema_ui"),
+      
       numericInput("n_questoes", "2. Número de questões na prova:",
                    value = 2, min = 1, step = 1),
-
+      
       numericInput("n_versoes", "3. Número de versões (A, B, C...):",
                    value = 1, min = 1, max = 20, step = 1),
-
+      
       selectInput("formato", "4. Formato de saída:",
                   choices = c("PDF (impressão)" = "pdf",
                               "HTML (online)"    = "html",
                               "Moodle (XML)"     = "moodle")),
-
+      
+      radioButtons("com_solucao", "5. Gerar com solução?",
+                   choices = c("Sem solução (prova)"   = "sem",
+                               "Com solução (gabarito)" = "com"),
+                   selected = "sem", inline = TRUE),
+      
       actionButton("gerar", "Gerar Prova", class = "btn-primary"),
-
+      
       br(), br(),
       downloadButton("baixar", "Baixar Prova + Gabarito")
     ),
-
+    
     mainPanel(
       h4("Status"),
       verbatimTextOutput("status"),
@@ -38,24 +43,29 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-
-  output$dificuldade_ui <- renderUI({
+  
+  output$tema_ui <- renderUI({
     req(input$disciplina)
-    difs <- list_dificuldades(input$disciplina)
-    checkboxGroupInput("dificuldade", "1b. Dificuldade:",
-                        choices = difs, selected = difs)
+    temas <- list_dificuldades(input$disciplina)
+    
+    checkboxGroupInput(
+      "tema",
+      "1b. Tema:",
+      choices = temas,
+      selected = temas
+    )
   })
-
+  
   questoes_filtradas <- reactive({
-    req(input$disciplina, input$dificuldade)
-    list_questoes(input$disciplina, input$dificuldade)
+    req(input$disciplina, input$tema)
+    list_questoes(input$disciplina, input$tema)
   })
-
+  
   output$preview_questoes <- renderTable({
     arquivos <- questoes_filtradas()
     data.frame(arquivo = basename(arquivos))
   })
-
+  
   resultado_geracao <- eventReactive(input$gerar, {
     arquivos <- questoes_filtradas()
     withProgress(message = "Gerando prova(s)...", value = 0.3, {
@@ -64,7 +74,8 @@ server <- function(input, output, session) {
           arquivos    = arquivos,
           n_questoes  = input$n_questoes,
           n_versoes   = input$n_versoes,
-          formato     = input$formato
+          formato     = input$formato,
+          com_solucao = input$com_solucao == "com"
         )
       }, error = function(e) {
         list(erro = conditionMessage(e))
@@ -73,7 +84,7 @@ server <- function(input, output, session) {
       res
     })
   })
-
+  
   output$status <- renderPrint({
     res <- resultado_geracao()
     if (!is.null(res$erro)) {
@@ -84,7 +95,7 @@ server <- function(input, output, session) {
       print(basename(res$arquivos_gerados))
     }
   })
-
+  
   output$baixar <- downloadHandler(
     filename = function() paste0("prova_", Sys.Date(), ".zip"),
     content = function(file) {
