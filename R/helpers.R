@@ -43,8 +43,10 @@ list_questoes <- function(disciplina, dificuldades, base = EXERCISES_DIR) {
 #' @param n_questoes número de questões a sortear por versão
 #' @param n_versoes número de versões (A, B, C, ...) a gerar
 #' @param formato "pdf", "html" ou "moodle"
+#' @param com_solucao se TRUE, inclui a solução/gabarito na saída gerada
 #' @param dir_saida pasta onde salvar os arquivos gerados
 generate_exam <- function(arquivos, n_questoes, n_versoes, formato = "pdf",
+                           com_solucao = FALSE,
                            dir_saida = tempfile("prova_")) {
 
   dir.create(dir_saida, showWarnings = FALSE, recursive = TRUE)
@@ -60,34 +62,34 @@ generate_exam <- function(arquivos, n_questoes, n_versoes, formato = "pdf",
 
   resultado <- list(dir = dir_saida, arquivos_gerados = c())
 
+  # nome do arquivo reflete se a solução está incluída, evitando que uma
+  # chamada sobrescreva a outra quando ambas gravam na mesma pasta
+  nome_saida <- if (com_solucao) "prova_gabarito" else "prova"
+
   if (formato == "pdf") {
     exams2pdf(
       selecionados,
-      n       = n_versoes,
-      dir     = dir_saida,
-      name    = "prova",
-      encoding = "UTF-8"
-    )
-    # gabarito / arquivo de correção em texto
-    exams_metainfo <- exams2pdf(
-      selecionados,
-      n = n_versoes,
-      dir = dir_saida,
-      name = "prova",
+      n        = n_versoes,
+      dir      = dir_saida,
+      name     = nome_saida,
       encoding = "UTF-8",
-      control = list(solution = TRUE)
+      control  = list(solution = com_solucao)
     )
 
   } else if (formato == "html") {
     exams2html(
       selecionados,
-      n    = n_versoes,
-      dir  = dir_saida,
-      name = "prova",
-      encoding = "UTF-8"
+      n        = n_versoes,
+      dir      = dir_saida,
+      name     = nome_saida,
+      encoding = "UTF-8",
+      control  = list(solution = com_solucao)
     )
 
   } else if (formato == "moodle") {
+    # o XML do Moodle carrega a resposta correta internamente (necessária
+    # para a correção automática), então a opção com/sem solução não se
+    # aplica a este formato
     exams2moodle(
       selecionados,
       n    = n_versoes,
