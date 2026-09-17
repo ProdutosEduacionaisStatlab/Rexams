@@ -46,26 +46,26 @@ list_questoes <- function(disciplina, dificuldades, base = EXERCISES_DIR) {
 #' @param com_solucao se TRUE, inclui a solução/gabarito na saída gerada
 #' @param dir_saida pasta onde salvar os arquivos gerados
 generate_exam <- function(arquivos, n_questoes, n_versoes, formato = "pdf",
-                           com_solucao = FALSE,
-                           dir_saida = tempfile("prova_")) {
-
+                          com_solucao = FALSE,
+                          dir_saida = tempfile("prova_")) {
+  
   dir.create(dir_saida, showWarnings = FALSE, recursive = TRUE)
-
+  
   if (length(arquivos) < n_questoes) {
     stop("O número de questões pedido é maior do que o banco disponível para os filtros escolhidos.")
   }
-
+  
   # Sorteia quais arquivos entram na prova (mesmo conjunto-base para
   # todas as versões; os VALORES dentro de cada questão são
   # re-sorteados automaticamente pelo exams a cada versão)
   selecionados <- sample(arquivos, n_questoes)
-
+  
   resultado <- list(dir = dir_saida, arquivos_gerados = c())
-
+  
   # nome do arquivo reflete se a solução está incluída, evitando que uma
   # chamada sobrescreva a outra quando ambas gravam na mesma pasta
   nome_saida <- if (com_solucao) "prova_gabarito" else "prova"
-
+  
   if (formato == "pdf") {
     exams2pdf(
       selecionados,
@@ -75,7 +75,7 @@ generate_exam <- function(arquivos, n_questoes, n_versoes, formato = "pdf",
       encoding = "UTF-8",
       control  = list(solution = com_solucao)
     )
-
+    
   } else if (formato == "html") {
     exams2html(
       selecionados,
@@ -85,7 +85,7 @@ generate_exam <- function(arquivos, n_questoes, n_versoes, formato = "pdf",
       encoding = "UTF-8",
       control  = list(solution = com_solucao)
     )
-
+    
   } else if (formato == "moodle") {
     # o XML do Moodle carrega a resposta correta internamente (necessária
     # para a correção automática), então a opção com/sem solução não se
@@ -97,11 +97,11 @@ generate_exam <- function(arquivos, n_questoes, n_versoes, formato = "pdf",
       name = "prova",
       encoding = "UTF-8"
     )
-
+    
   } else {
     stop("Formato não suportado: ", formato)
   }
-
+  
   resultado$arquivos_gerados <- list.files(dir_saida, full.names = TRUE)
   resultado
 }
