@@ -1,5 +1,6 @@
 library(shiny)
 source("R/helpers.R")
+source("R/ia_helpers.R")
 
 ui <- fluidPage(
   titlePanel("Gerador de Provas Automáticas — R/Exams"),
@@ -30,14 +31,44 @@ ui <- fluidPage(
       actionButton("gerar", "Gerar Prova", class = "btn-primary"),
       
       br(), br(),
-      downloadButton("baixar", "Baixar Prova + Gabarito")
+      downloadButton("baixar", "Baixar Prova + Gabarito"),
+      hr(),
+      h4("Gerar nova questão com IA"),
+
+      selectInput("ia_disciplina", "Disciplina desta questão:",
+                  choices = list_disciplinas()),
+
+      uiOutput("ia_tema_ui"),
+
+      radioButtons("ia_fonte", "Fonte da questão:",
+                   choices = c("Colar texto" = "texto",
+                               "Enviar arquivo (PDF ou Word)" = "arquivo"),
+                   selected = "texto", inline = TRUE),
+
+      conditionalPanel(
+        condition = "input.ia_fonte == 'texto'",
+        textAreaInput("ia_texto", "Descreva ou cole a questão:",
+                      rows = 6, width = "100%")
+      ),
+
+      conditionalPanel(
+        condition = "input.ia_fonte == 'arquivo'",
+        fileInput("ia_arquivo", "Arquivo (.pdf ou .docx):",
+                 accept = c(".pdf", ".docx"))
+      ),
+
+      actionButton("ia_gerar", "Gerar questão com IA", class = "btn-info")
     ),
     
     mainPanel(
       h4("Status"),
       verbatimTextOutput("status"),
       h4("Questões disponíveis com os filtros escolhidos"),
-      tableOutput("preview_questoes")
+      tableOutput("preview_questoes"),
+      hr(),
+      h4("Prévia da questão gerada"),
+      verbatimTextOutput("ia_preview"),
+      uiOutput("ia_salvar_ui")
     )
   )
 )
@@ -105,6 +136,76 @@ server <- function(input, output, session) {
       file.copy(zip_path, file)
     }
   )
+    output$ia_tema_ui <- renderUI({
+    req(input$ia_disciplina)
+    temas <- list_dificuldades(input$ia_disciplina)
+    selectInput("ia_tema", "Tema:", choices = temas)
+  })
+
+  questao_gerada <- eventReactive(input$ia_gerar, {
+    req(input$ia_disciplina, input$ia_tema)
+
+    texto_base <- if (input$ia_fonte == "texto") {
+      req(input$ia_texto)
+      input$ia_texto
+    } else {
+      req(input$ia_arquivo)
+      extensao <- tools::file_ext(input$ia_arquivo$name)
+      extrair_texto_arquivo(input$ia_arquivo$datapath, extensao)
+    }
+
+    withProgress(message = "Gerando questão com a IA...", value = 0.3, {
+      res <- tryCatch({
+        prompt <- montar_prompt_questao(texto_base, input$ia_disciplina, input$ia_tema)
+        bruto  <- chamar_groq(prompt)
+        rmd    <- limpar_resposta_ia(bruto)
+
+        # valida se o .Rmd realmente compila antes de oferecer para salvar
+        arquivo_temp <- tempfile(fileext = ".Rmd")
+        writeLines(rmd, arquivo_temp)
+        dir_teste <- tempfile("teste_ia_")
+        dir.create(dir_teste)
+        exams::exams2html(arquivo_temp, dir = dir_teste, n = 1)
+
+        list(rmd = rmd, ok = TRUE)
+      }, error = function(e) {
+        list(erro = conditionMessage(e), ok = FALSE)
+      })
+      incProgress(0.7)
+      res
+    })
+  })
+
+  output$ia_preview <- renderPrint({
+    res <- questao_gerada()
+    if (isTRUE(res$ok)) {
+      cat(res$rmd)
+    } else {
+      cat("Erro ao gerar/validar a questão:\n", res$erro)
+    }
+  })
+
+  output$ia_salvar_ui <- renderUI({
+    res <- questao_gerada()
+    if (isTRUE(res$ok)) {
+      tagList(
+        textInput("ia_nome_arquivo", "Nome do arquivo (sem .Rmd):", value = "nova_questao"),
+        actionButton("ia_salvar", "Salvar no banco de questões", class = "btn-success")
+      )
+    }
+  })
+
+  observeEvent(input$ia_salvar, {
+    res <- questao_gerada()
+    req(isTRUE(res$ok), input$ia_nome_arquivo)
+
+    pasta_destino <- file.path(EXERCISES_DIR, input$ia_disciplina, input$ia_tema)
+    dir.create(pasta_destino, showWarnings = FALSE, recursive = TRUE)
+    caminho <- file.path(pasta_destino, paste0(input$ia_nome_arquivo, ".Rmd"))
+    writeLines(res$rmd, caminho)
+
+    showNotification(paste("Questão salva em", caminho), type = "message")
+  })
 }
 
 shinyApp(ui, server)
