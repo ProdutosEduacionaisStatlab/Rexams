@@ -272,8 +272,3 @@ docker compose restart
 * [ ] Exportação direta para Moodle via API (em vez de XML manual)
 * [ ] Correção automática de respostas de alunos (exams2nops / scanner de folha óptica)
 * [ ] Publicar o app em um servidor (shinyapps.io, Posit Connect ou Docker em VPS) para acesso fora da máquina local
-
-## Licença e autoria
-
-* **Licença:** _a definir_ (adicione um arquivo `LICENSE` na raiz e cite-o aqui).
-* **Autoria e contato:** _a definir_.
