@@ -1,5 +1,5 @@
 # Execute este script uma vez para instalar as dependências do projeto
-pacotes <- c("shiny", "exams", "rmarkdown", "knitr", "tools")
+pacotes <- c("shiny", "exams", "rmarkdown", "knitr", "tools", "httr2", "pdftools", "officer")
 
 instalar_se_faltando <- function(p) {
   if (!requireNamespace(p, quietly = TRUE)) install.packages(p)
