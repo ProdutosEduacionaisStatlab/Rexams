@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # 3. Instalação dos pacotes do R diretamente
-RUN R -e "install.packages(c('exams', 'rmarkdown', 'knitr'), repos='https://cloud.r-project.org/')"
+RUN R -e "install.packages(c('exams', 'rmarkdown', 'knitr', 'httr2', 'pdftools', 'officer'), repos='https://cloud.r-project.org/')"
 
 # 4. Limpa o aplicativo padrão da imagem
 RUN rm -rf /srv/shiny-server/*
