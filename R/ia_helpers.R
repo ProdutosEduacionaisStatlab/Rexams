@@ -26,37 +26,35 @@ chamar_groq <- function(prompt) {
 #' Monta o prompt que ensina a IA a escrever no formato do R/Exams
 montar_prompt_questao <- function(descricao, disciplina, tema) {
   paste0(
-    "Voce e um especialista em criar questoes no formato R/Exams (arquivo .Rmd).\n",
-    "Transforme a descricao abaixo em UMA questao completa, seguindo EXATAMENTE este modelo:\n\n",
-    "```{r, echo=FALSE, results=\"hide\"}\n",
-    "# codigo R que sorteia valores aleatorios usados no enunciado (use sample() ou runif())\n",
-    "```\n\n",
-    "Question\n========\n",
-    "Enunciado da questao, usando os valores sorteados com `r nome_variavel`.\n\n",
-    "Answerlist\n----------\n",
-    "* alternativa 1\n* alternativa 2\n* alternativa 3\n* alternativa 4\n\n",
-    "Solution\n========\n",
-    "Explicacao de como resolver.\n\n",
-    "Answerlist\n----------\n",
-    "* Correto! ou Incorreto. para cada alternativa, na MESMA ordem da Question\n\n",
-    "Meta-information\n================\n",
-    "exname: nome_curto_sem_acento_sem_espaco\n",
-    "extype: schoice, mchoice, num ou string (escolha o mais adequado)\n",
-    "exsolution: sequencia de 0 e 1 (um digito por alternativa) se for schoice/mchoice, OU o valor numerico correto se for num\n",
-    "exshuffle: TRUE\n",
-    "exsection: ", disciplina, "/", tema, "\n\n",
-    "Regras obrigatorias:\n",
-    "- Se for multipla escolha, a Answerlist da Question e a da Solution devem ter a MESMA quantidade de itens.\n",
-    "- O exsolution deve ter exatamente um digito por alternativa (ex: 4 alternativas -> 4 digitos, tipo 0100).\n",
-    "- Se for questao numerica (extype: num), nao use Answerlist; use exsolution com o valor certo e acrescente a linha extol: 0.05.\n",
-    "- Escreva formulas e simbolos matematicos entre $...$ (LaTeX).\n",
-    "- O codigo R deve realmente sortear valores diferentes a cada vez, nao pode repetir sempre os mesmos numeros.\n\n",
-    "Descricao da questao fornecida pelo professor:\n\"\"\"\n", descricao, "\n\"\"\"\n\n",
-    "Disciplina: ", disciplina, "\n",
-    "Tema: ", tema, "\n\n",
-    "Devolva SOMENTE o conteudo do arquivo .Rmd, sem nenhum texto explicativo antes ou depois, e sem blocos de markdown (sem ``` no inicio ou no fim)."
+    "Você é um programador especialista em criar questões no formato R/Exams (arquivo .Rmd).\n",
+    "Gere o conteúdo exato do arquivo .Rmd. Escolha o formato: 'schoice', 'num' ou 'string'.\n\n",
+
+    "=== REGRAS ===\n",
+    "1. A tag 'exsolution' no Meta-information é OBRIGATÓRIA PARA TODOS OS TIPOS.\n",
+    "2. Múltipla escolha (schoice): Use a seção 'Answerlist' (com traços ---------). O 'exsolution' deve ser binário (ex: 1000) com o mesmo número de itens da lista.\n",
+    "3. Numérica (num) e Aberta (string): NUNCA crie 'Answerlist'. Para num, o exsolution é o número exato e adicione extol. Para string, o exsolution é nil.\n",
+    "4. NUNCA adicione linhas de sinais de igual (====) no final do arquivo. Retorne APENAS o código puro.\n\n",
+
+    "--- EXEMPLO SCHOICE ---\n",
+    "Question\n========\nQual a capital da França?\n\nAnswerlist\n----------\n* Paris\n* Londres\n\nSolution\n========\nÉ Paris.\n\nAnswerlist\n----------\n* Correto\n* Incorreto\n\nMeta-information\n================\n",
+    "exname: questao_ia\nextype: schoice\nexsolution: 10\nexshuffle: TRUE\n\n",
+
+    "--- EXEMPLO NUM ---\n",
+    "Question\n========\nCalcule 7 x 8.\n\nSolution\n========\nO resultado é 56.\n\nMeta-information\n================\n",
+    "exname: questao_ia\nextype: num\nexsolution: 56\nextol: 0.01\n\n",
+
+    "--- EXEMPLO STRING ---\n",
+    "Question\n========\nO que é fotossíntese?\n\nSolution\n========\nÉ o processo das plantas.\n\nMeta-information\n================\n",
+    "exname: questao_ia\nextype: string\nexsolution: nil\n\n",
+
+    "Gere a questão abaixo:\n\"\"\"\n", descricao, "\n\"\"\"\n\n",
+    "Inclua no Meta-information:\n",
+    "exname: questao_gerada_ia\n",
+    "exsection: ", disciplina, "/", tema, "\n"
   )
 }
+
+
 
 limpar_resposta_ia <- function(texto) {
   texto <- gsub("^```(text|r|rmd)?\\n", "", texto)
