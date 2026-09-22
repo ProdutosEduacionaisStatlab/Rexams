@@ -10,7 +10,8 @@ services:
       - "3838:3838"
     volumes:
       # Sincroniza a pasta local com o caminho exato dentro do container
-      - ./exercises:/srv/shiny-server/rexams-web/exercises
+      - ./:/srv/shiny-server/rexams-web
+      #- ./exercises:/srv/shiny-server/rexams-web/exercises
     environment:
       - GROQ_API_KEY=${GROQ_API_KEY}
     restart: unless-stopped
