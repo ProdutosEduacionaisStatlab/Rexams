@@ -8,6 +8,12 @@ RUN apt-get update && apt-get install -y \
     texlive-fonts-recommended \
     pandoc \
     zip \
+    libpoppler-cpp-dev \
+    libxml2-dev \
+    libicu-dev \
+    libssl-dev \
+    libharfbuzz-dev \
+    libfribidi-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # 3. Instalação dos pacotes do R diretamente
