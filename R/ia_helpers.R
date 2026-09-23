@@ -35,6 +35,12 @@ montar_prompt_questao <- function(descricao, disciplina, tema) {
     "3. Numérica (num) e Aberta (string): NUNCA crie 'Answerlist'. Para num, o exsolution é o número exato e adicione extol. Para string, o exsolution é nil.\n",
     "4. NUNCA adicione linhas de sinais de igual (====) no final do arquivo. Retorne APENAS o código puro.\n\n",
 
+    "Regras vitais:\n",
+    "1. A tag 'exsolution' é OBRIGATÓRIA SEMPRE.\n",
+    "2. Para 'schoice' e 'mchoice', exsolution DEVE ser uma sequência de 0s e 1s com o número EXATO de dígitos igual ao número de itens na Answerlist (ex: 10100 para 5 alternativas, onde 1 indica as alternativas corretas).\n",
+    "3. Se escolher 'num' ou 'string', NÃO crie a seção 'Answerlist'.\n",
+    "4. Devolva SOMENTE o conteúdo do arquivo .Rmd, sem markdown (```) e sem texto extra.\n\n",
+    
     "--- EXEMPLO SCHOICE ---\n",
     "Question\n========\nQual a capital da França?\n\nAnswerlist\n----------\n* Paris\n* Londres\n\nSolution\n========\nÉ Paris.\n\nAnswerlist\n----------\n* Correto\n* Incorreto\n\nMeta-information\n================\n",
     "exname: questao_ia\nextype: schoice\nexsolution: 10\nexshuffle: TRUE\n\n",
