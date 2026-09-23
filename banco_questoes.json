@@ -1,0 +1,92 @@
+[
+  {
+    "id": "soma_dois_numeros",
+    "disciplina": "Matematica",
+    "tema": "Facil",
+    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\na <- sample(2:20, 1)\nb <- sample(2:20, 1)\nresultado <- a + b\n```\n\nQuestion\n========\nCalcule o resultado da soma entre `r a` e `r b`.\n\nAnswerlist\n----------\n* `r resultado - 2`\n* `r resultado`\n* `r resultado + 3`\n* `r resultado + 5`\n\nSolution\n========\nA soma de `r a` com `r b` é igual a `r resultado`.\n\nAnswerlist\n----------\n* Incorreto.\n* Correto! `r a` + `r b` = `r resultado`.\n* Incorreto.\n* Incorreto.\n\nMeta-information\n================\nexname: soma_dois_numeros\nextype: schoice\nexsolution: 0100\nexshuffle: TRUE\nexsection: Matematica/Facil"
+  },
+  {
+    "id": "equacao_primeiro_grau",
+    "disciplina": "Matematica",
+    "tema": "Dificil",
+    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\nx_sol <- sample(2:12, 1)\na <- sample(2:9, 1)\nb <- sample(1:15, 1)\nc <- a * x_sol + b\n```\n\nQuestion\n========\nResolva a equação $`r a`x + `r b` = `r c`$e informe o valor de$x$.\n\nSolution\n========\nIsolando$x$:$x = (`r c` - `r b`) / `r a` = `r x_sol`$.\n\nMeta-information\n================\nexname: equacao_primeiro_grau\nextype: num\nexsolution: `r x_sol`\nextol: 0\nexsection: Matematica/Dificil"
+  },
+  {
+    "id": "assimetria_distribuicao",
+    "disciplina": "estatistica",
+    "tema": "analise_exploratoria",
+    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\ncontextos <- list(\n  list(variavel = \"tempo de internação (dias)\", cauda = \"direita\",\n       fato = \"poucos pacientes permanecem internados por muito mais tempo que a maioria\"),\n  list(variavel = \"dose diária de um medicamento (mg)\", cauda = \"direita\",\n       fato = \"a maior parte dos pacientes usa doses baixas, mas alguns poucos usam doses muito altas\"),\n  list(variavel = \"idade ao diagnóstico de uma doença rara (anos)\", cauda = \"esquerda\",\n       fato = \"a maioria dos casos é diagnosticada em idade avançada, com poucos casos em pacientes jovens\")\n)\nsorteado <- contextos[[sample(1:length(contextos), 1)]]\n```\n\nQuestion\n========\nEm um estudo clínico, observou-se que, para a variável **`r sorteado$variavel`**,\n`r sorteado$fato`. Um histograma dessa variável apresentaria uma cauda mais\nalongada para qual lado, e como se classifica essa distribuição quanto à\nassimetria?\n\nAnswerlist\n----------\n* Cauda à esquerda; distribuição assimétrica negativa (à esquerda).\n* Cauda à direita; distribuição assimétrica positiva (à direita).\n* Sem cauda alongada; distribuição perfeitamente simétrica.\n* A forma do histograma não permite avaliar assimetria.\n\nSolution\n========\nQuando poucos valores extremos \"puxam\" a distribuição para valores altos,\na cauda mais longa fica à direita e a distribuição é chamada de assimétrica\npositiva (à direita). O caso contrário (poucos valores extremos baixos)\ngera assimetria negativa (à esquerda), com cauda à esquerda.\n\nAnswerlist\n----------\n* `r ifelse(sorteado$cauda == \"esquerda\", \"Correto.\", \"Incorreto.\")`\n* `r ifelse(sorteado$cauda == \"direita\", \"Correto.\", \"Incorreto.\")`\n* Incorreto, distribuições com valores extremos não são simétricas.\n* Incorreto, o formato do histograma é justamente a principal ferramenta para isso.\n\nMeta-information\n================\nexname: assimetria_distribuicao\nextype: schoice\nexsolution: `r ifelse(sorteado$cauda == \"esquerda\", \"1000\", \"0100\")`\nexshuffle: TRUE\nexsection: Estatistica/AnaliseExploratoria"
+  },
+  {
+    "id": "colesterol_desviopadrao",
+    "disciplina": "estatistica",
+    "tema": "analise_exploratoria",
+    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\nn <- sample(5:7, 1)\nmedia_alvo <- sample(190:210, 1)\nvalores <- round(media_alvo + rnorm(n, 0, 15))\ndp <- round(sd(valores), 2)\nmedia <- round(mean(valores), 1)\n```\n\nQuestion\n========\nEm um ambulatório, foram medidos os níveis de colesterol total (mg/dL) de\n`r n` pacientes em jejum: `r paste(valores, collapse = \", \")`.\n\nCalcule o desvio padrão amostral desses valores (arredonde para 2 casas decimais).\n\nSolution\n========\nA média é `r media` mg/dL. O desvio padrão amostral é calculado como\n$s = \\sqrt{\\frac{\\sum (x_i - \\bar{x})^2}{n-1}}$, resultando em\n$s = `r dp`$ mg/dL.\n\nMeta-information\n================\nexname: desvio_padrao_colesterol\nextype: num\nexsolution: `r dp`\nextol: 0.05\nexsection: Estatistica/AnaliseExploratoria"
+  },
+  {
+    "id": "media",
+    "disciplina": "estatistica",
+    "tema": "facil",
+    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\nvals <- sample(1:30, 4)\nmedia <- round(mean(vals), 2)\n```\n\nQuestion\n========\nConsidere os valores `r paste(vals, collapse = \", \")`. Qual é a média aritmética desse conjunto?\n\nSolution\n========\nA média é a soma dos valores dividida pela quantidade: $(`r paste(vals, collapse = \" + \")`) / `r length(vals)` = `r media`$.\n\nMeta-information\n================\nexname: media_aritmetica\nextype: num\nexsolution: `r media`\nextol: 0.05\nexsection: Estatistica/Facil"
+  },
+  {
+    "id": "ic_media_imc",
+    "disciplina": "estatistica",
+    "tema": "inferencia",
+    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\nn <- sample(36:64, 1)\nmedia <- round(sample(220:280, 1) / 10, 1)\ndp <- round(sample(30:55, 1) / 10, 1)\nerro_padrao <- dp / sqrt(n)\nic_inferior <- round(media - 1.96 * erro_padrao, 2)\nic_superior <- round(media + 1.96 * erro_padrao, 2)\n```\n\nQuestion\n========\nEm uma amostra aleatória de `r n` pacientes adultos de uma clínica, o Índice\nde Massa Corporal (IMC) médio foi `r media` kg/m², com desvio padrão de\n`r dp` kg/m². Assumindo que a amostra é grande o suficiente para usar a\naproximação normal, calcule o **limite inferior** do intervalo de confiança\nde 95% para a média populacional do IMC (use $z = 1{,}96$; arredonde para\n2 casas decimais).\n\nSolution\n========\nO erro padrão da média é $EP = s / \\sqrt{n} = `r dp` / \\sqrt{`r n`} = `r round(erro_padrao, 3)`$.\n\nO limite inferior do IC 95% é dado por\n$\\bar{x} - 1{,}96 \\times EP = `r media` - 1{,}96 \\times `r round(erro_padrao, 3)` = `r ic_inferior`$ kg/m².\n\n(O limite superior seria `r ic_superior` kg/m².)\n\nMeta-information\n================\nexname: ic_media_imc\nextype: num\nexsolution: `r ic_inferior`\nextol: 0.1\nexsection: Estatistica/Inferencia"
+  },
+  {
+    "id": "interpretacao_pvalor",
+    "disciplina": "estatistica",
+    "tema": "inferencia",
+    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\np_valor <- sample(c(0.001, 0.003, 0.02, 0.04), 1)\nalfa <- 0.05\nsignificativo <- p_valor < alfa\n```\n\nQuestion\n========\nEm um ensaio clínico randomizado comparando um novo anti-hipertensivo a\nplacebo, o teste de hipótese para diferença de médias na pressão arterial\nsistólica resultou em um valor-p = `r p_valor`, com nível de significância\n$\\alpha = 0{,}05$ pré-estabelecido. Qual a interpretação correta?\n\nAnswerlist\n----------\n* O valor-p indica a probabilidade de o medicamento ser eficaz.\n* Como o valor-p `r ifelse(significativo, \"é menor\", \"não é menor\")` que $\\alpha$, `r ifelse(significativo, \"rejeita-se\", \"não se rejeita\")` a hipótese nula de que não há diferença entre os grupos.\n* O valor-p mostra o tamanho do efeito clínico do medicamento.\n* Um valor-p pequeno prova que o medicamento causa a redução da pressão.\n\nSolution\n========\nO valor-p é a probabilidade de observar um resultado tão ou mais extremo\nquanto o obtido, assumindo que a hipótese nula (não há diferença entre os\ngrupos) é verdadeira — ele não mede probabilidade de eficácia, tamanho de\nefeito, nem prova causalidade. Compara-se o valor-p a $\\alpha$ para decidir\nsobre rejeitar ou não a hipótese nula.\n\nAnswerlist\n----------\n* Incorreto: valor-p não é a probabilidade de a hipótese alternativa ser verdadeira.\n* Correto: essa é a interpretação estatisticamente adequada do valor-p frente a $\\alpha$.\n* Incorreto: valor-p não mede magnitude/tamanho de efeito.\n* Incorreto: significância estatística não implica causalidade comprovada.\n\nMeta-information\n================\nexname: interpretacao_pvalor\nextype: schoice\nexsolution: 0100\nexshuffle: TRUE\nexsection: Estatistica/Inferencia"
+  },
+  {
+    "id": "coeficiente_dose_resposta",
+    "disciplina": "estatistica",
+    "tema": "regressao",
+    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\ndose <- c(5, 10, 15, 20, 25)\nbeta1_true <- sample(2:5, 1)\nbeta0_true <- sample(60:80, 1)\nresposta <- round(beta0_true + beta1_true * dose + rnorm(5, 0, 3), 1)\nmodelo <- lm(resposta ~ dose)\ncoef_dose <- round(coef(modelo)[2], 2)\n```\n\nQuestion\n========\nUm estudo farmacológico avaliou a redução da pressão arterial diastólica\n(mmHg) em função da dose de um medicamento (mg), obtendo os seguintes\npares dose–resposta:\n\nDose (mg): `r paste(dose, collapse = \", \")`\n\nRedução da PA diastólica (mmHg): `r paste(resposta, collapse = \", \")`\n\nAjustando um modelo de regressão linear simples (Resposta = $\\beta_0$ +\n$\\beta_1$ × Dose), qual é o valor estimado do coeficiente angular\n$\\beta_1$ (arredonde para 2 casas decimais)?\n\nSolution\n========\nAjustando o modelo de regressão linear pelo método dos mínimos quadrados,\no coeficiente angular estimado é $\\hat{\\beta}_1 = `r coef_dose`$ mmHg por\nmg de dose, ou seja, a cada aumento de 1 mg na dose, espera-se uma\nredução adicional de aproximadamente `r coef_dose` mmHg na pressão\ndiastólica, dentro da faixa de doses estudada.\n\nMeta-information\n================\nexname: coeficiente_regressao_dose\nextype: num\nexsolution: `r coef_dose`\nextol: 0.3\nexsection: Estatistica/Regressao"
+  },
+  {
+    "id": "interpretacao_r2",
+    "disciplina": "estatistica",
+    "tema": "regressao",
+    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\nr2 <- sample(c(0.15, 0.42, 0.68, 0.85), 1)\npct <- round(r2 * 100)\n```\n\nQuestion\n========\nUm pesquisador ajustou um modelo de regressão linear simples para\navaliar a relação entre a idade de pacientes e o nível de creatinina\nsérica, obtendo um coeficiente de determinação $R^2 = `r r2`$.\nQual a interpretação correta desse resultado?\n\nAnswerlist\n----------\n* `r pct`% da variação na idade dos pacientes é explicada pela creatinina.\n* `r pct`% da variação no nível de creatinina sérica é explicada pela idade, segundo o modelo ajustado.\n* O modelo prevê corretamente a creatinina em `r pct`% dos pacientes.\n* Existe uma relação de causa e efeito entre idade e creatinina, com força de `r pct`%.\n\nSolution\n========\nO $R^2$ representa a proporção da variabilidade da variável **resposta**\n(no caso, a creatinina sérica) que é explicada pela variável\n**explicativa** (idade) no modelo de regressão ajustado. Ele não indica\npercentual de acerto de previsões individuais, nem estabelece causalidade\npor si só — apenas o quanto do modelo linear ajustado explica a\nvariação observada.\n\nAnswerlist\n----------\n* Incorreto: o $R^2$ se refere à variação explicada na variável resposta (creatinina), não na explicativa (idade).\n* Correto: essa é a interpretação padrão do coeficiente de determinação.\n* Incorreto: $R^2$ não é uma taxa de acerto de classificação/previsão individual.\n* Incorreto: associação estatística (mesmo que forte) não comprova causalidade.\n\nMeta-information\n================\nexname: interpretacao_r2\nextype: schoice\nexsolution: 0100\nexshuffle: TRUE\nexsection: Estatistica/Regressao"
+  },
+  {
+    "id": "nova_questao",
+    "disciplina": "Matematica",
+    "tema": "Facil",
+    "conteudo_rmd": "Question\n========\nCalcule as raízes da equação de segundo grau \\(ax^2 + bx + c = 0\\) com os coeficientes \\(a = 1\\), \\(b = -5\\) e \\(c = 6\\). Qual dos pares abaixo representa corretamente as raízes?\n\nAnswerlist\n----------\n* 2 e 3\n* 2 e -3\n* -2 e 3\n* -2 e -3\n\nSolution\n========\nAs raízes são \\(x = 2\\) e \\(x = 3\\).\n\nAnswerlist\n----------\n* Correto\n* Incorreto\n\nMeta-information\n================\nexname: questao_gerada_ia\nexsection: Matematica/Facil\nextype: schoice\nexsolution: 1000\nexshuffle: TRUE"
+  },
+  {
+    "id": "nova_questao",
+    "disciplina": "Matematica",
+    "tema": "Dificil",
+    "conteudo_rmd": "Question\n========\nUm armazém possui 6 caixas de mercadorias. Os pesos das caixas são (em kg): 12.3, 27.8, 34.5, 19.6, 42.1 e 23.9. Calcule o desvio padrão amostral desses pesos.\n\nSolution\n========\nO desvio padrão amostral é aproximadamente 10.63 kg.\n\nMeta-information\n================\nexname: questao_gerada_ia\nexsection: Matematica/Dificil\nextype: num\nexsolution: 10.6285\nextol: 0.01"
+  },
+  {
+    "id": "nova_questao",
+    "disciplina": "estatistica",
+    "tema": "facil",
+    "conteudo_rmd": "Question\n========\nConsidere as notas: 2, 5, 7, 8, 9. Qual a mediana dessas notas?\n\nAnswerlist\n----------\n* 7\n* 6.2\n* 4\n* 10\n* 0\n\nSolution\n========\nA mediana é 7.\n\nMeta-information\n================\nexname: questao_gerada_ia\nexsection: estatistica/facil\nextype: schoice\nexsolution: 10000\nexshuffle: TRUE"
+  },
+  {
+    "id": "Progressão Aritmética",
+    "disciplina": "Matematica",
+    "tema": "Facil",
+    "conteudo_rmd": "Question\n========\nQual é o décimo termo de uma progressão aritmética (PA) cujo primeiro termo é 3 e a razão é 4?\n\nAnswerlist\n----------\n* 39\n* 35\n* 43\n* 31\n* 27\n\nSolution\n========\nPara encontrar o décimo termo de uma PA usamos a fórmula  \n\\(a_n = a_1 + (n-1)d\\).  \nSubstituindo \\(a_1 = 3\\), \\(d = 4\\) e \\(n = 10\\):  \n\\(a_{10} = 3 + (10-1)\\times 4 = 3 + 9\\times 4 = 3 + 36 = 39\\).  \nPortanto, o décimo termo é 39.\n\nMeta-information\n================\nexname: questao_gerada_ia\nexsection: Matematica/Facil\nextype: schoice\nexsolution: 10000\nexshuffle: TRUE"
+  },
+  {
+    "id": "Progressão Aritmética",
+    "disciplina": "Matematica",
+    "tema": "Facil",
+    "conteudo_rmd": "Question\n========\nUm jovem começa a economizar guardando R$10,00 no primeiro mês e, a cada mês, aumenta o valor guardado em R$5,00. Qual será o valor guardado no décimo mês?\n\nAnswerlist\n----------\n* R$55,00\n* R$50,00\n* R$60,00\n* R$45,00\n\nSolution\n========\nO décimo termo de uma progressão aritmética é calculado por a_n = a_1 + (n-1)d. Aqui, a_1 = 10, d = 5 e n = 10, então a_10 = 10 + 9·5 = 55. Portanto, o valor guardado no décimo mês é R$55,00.\n\nMeta-information\n================\nexname: questao_gerada_ia\nexsection: Matematica/Facil\nextype: schoice\nexsolution: 1000\nexshuffle: TRUE"
+  },
+  {
+    "id": "Questão de Razão e Proporção",
+    "disciplina": "Matematica",
+    "tema": "Facil",
+    "conteudo_rmd": "Question\n========\nQuatro pedreiros constroem um muro em 12 dias. Quantos dias levarão seis pedreiros para construir o mesmo muro, assumindo que o trabalho é proporcional ao número de pedreiros?\n\nAnswerlist\n----------\n* 8 dias\n* 9 dias\n* 10 dias\n* 12 dias\n\nSolution\n========\nComo 4 pedreiros levam 12 dias, o trabalho total é 4 × 12 = 48 pedreiro‑dias. Com 6 pedreiros, 48 ÷ 6 = 8 dias.\n\nMeta-information\n================\nexname: questao_gerada_ia\nexsection: Matematica/Facil\nextype: schoice\nexsolution: 1000\nexshuffle: TRUE"
+  }
+]
