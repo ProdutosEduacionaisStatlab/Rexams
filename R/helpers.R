@@ -6,35 +6,45 @@
 
 library(exams)
 library(tools)
+library(jsonlite)
 
-EXERCISES_DIR <- "exercises"
 
-#' Lista as disciplinas disponíveis (subpastas de exercises/)
-list_disciplinas <- function(base = EXERCISES_DIR) {
-  dirs <- list.dirs(base, recursive = FALSE, full.names = FALSE)
-  sort(dirs)
+ARQUIVO_BANCO <- "banco_questoes.json"
+
+ler_banco <- function() {
+  if (!file.exists(ARQUIVO_BANCO)) {
+    return(data.frame(id = character(), disciplina = character(), tema = character(), conteudo_rmd = character()))
+  }
+  dados <- fromJSON(ARQUIVO_BANCO)
+  
+  if (length(dados) == 0) {
+    return(data.frame(id = character(), disciplina = character(), tema = character(), conteudo_rmd = character()))
+  }
+  return(dados)
 }
 
-#' Lista as dificuldades disponíveis para uma disciplina
-#' (subpastas dentro de exercises/<disciplina>/)
-list_dificuldades <- function(disciplina, base = EXERCISES_DIR) {
-  path <- file.path(base, disciplina)
-  if (!dir.exists(path)) return(character(0))
-  dirs <- list.dirs(path, recursive = FALSE, full.names = FALSE)
-  sort(dirs)
+
+#' Lista as disciplinas disponíveis (subpastas de exercises/)
+list_disciplinas <- function() {
+  banco <- ler_banco()
+  if (nrow(banco) == 0) return(character(0))
+  sort(unique(banco$disciplina))
+}
+
+list_dificuldades <- function(disciplina_alvo) {
+  banco <- ler_banco()
+  if (nrow(banco) == 0) return(character(0))
+
+  temas <- banco$tema[banco$disciplina == disciplina_alvo]
+  sort(unique(temas))
 }
 
 #' Lista os arquivos de questão (.Rmd/.Rnw) para disciplina + dificuldades
-list_questoes <- function(disciplina, dificuldades, base = EXERCISES_DIR) {
-  arquivos <- c()
-  for (dif in dificuldades) {
-    path <- file.path(base, disciplina, dif)
-    if (dir.exists(path)) {
-      f <- list.files(path, pattern = "\\.(Rmd|Rnw)$", full.names = TRUE)
-      arquivos <- c(arquivos, f)
-    }
-  }
-  arquivos
+filtrar_questoes <- function(disciplina_alvo, temas_alvo) {
+  banco <- ler_banco()
+  if (nrow(banco) == 0) return(data.frame())
+
+  banco[banco$disciplina == disciplina_alvo & banco$tema %in% temas_alvo, ]
 }
 
 #' Gera a prova (e gabarito) usando o pacote exams
@@ -45,63 +55,72 @@ list_questoes <- function(disciplina, dificuldades, base = EXERCISES_DIR) {
 #' @param formato "pdf", "html" ou "moodle"
 #' @param com_solucao se TRUE, inclui a solução/gabarito na saída gerada
 #' @param dir_saida pasta onde salvar os arquivos gerados
-generate_exam <- function(arquivos, n_questoes, n_versoes, formato = "pdf",
+
+#' Gera a prova (e gabarito) usando o pacote exams e o banco JSON
+generate_exam <- function(df_questoes, n_questoes, n_versoes, formato = "pdf",
                           com_solucao = FALSE,
                           dir_saida = tempfile("prova_")) {
-  
+
   dir.create(dir_saida, showWarnings = FALSE, recursive = TRUE)
-  
-  if (length(arquivos) < n_questoes) {
+
+  if (nrow(df_questoes) < n_questoes) {
     stop("O número de questões pedido é maior do que o banco disponível para os filtros escolhidos.")
   }
-  
-  # Sorteia quais arquivos entram na prova (mesmo conjunto-base para
-  # todas as versões; os VALORES dentro de cada questão são
-  # re-sorteados automaticamente pelo exams a cada versão)
-  selecionados <- sample(arquivos, n_questoes)
-  
+
+  # Sorteia as questões (linhas do dataframe)
+  indices_sorteados <- sample(seq_len(nrow(df_questoes)), n_questoes)
+  selecionados <- df_questoes[indices_sorteados, ]
+
+  # =================================================================
+  # O "Fatiador Temporário": transforma o texto do JSON em arquivos .Rmd
+  # =================================================================
+  dir_rmd_temp <- tempfile("rmd_temp_")
+  dir.create(dir_rmd_temp, showWarnings = FALSE)
+
+  arquivos_temp <- c()
+  for (i in seq_len(nrow(selecionados))) {
+    nome_arquivo <- file.path(dir_rmd_temp, paste0("questao_", i, ".Rmd"))
+    writeLines(selecionados$conteudo_rmd[i], nome_arquivo)
+    arquivos_temp <- c(arquivos_temp, nome_arquivo)
+  }
+
   resultado <- list(dir = dir_saida, arquivos_gerados = c())
-  
-  # nome do arquivo reflete se a solução está incluída, evitando que uma
-  # chamada sobrescreva a outra quando ambas gravam na mesma pasta
   nome_saida <- if (com_solucao) "prova_gabarito" else "prova"
-  
+
+  # O resto continua igual, mas agora usando os `arquivos_temp`
   if (formato == "pdf") {
     exams2pdf(
-      selecionados,
+      arquivos_temp,
       n        = n_versoes,
       dir      = dir_saida,
       name     = nome_saida,
       encoding = "UTF-8",
       control  = list(solution = com_solucao)
     )
-    
+
   } else if (formato == "html") {
     exams2html(
-      selecionados,
+      arquivos_temp,
       n        = n_versoes,
       dir      = dir_saida,
       name     = nome_saida,
       encoding = "UTF-8",
       control  = list(solution = com_solucao)
     )
-    
+
   } else if (formato == "moodle") {
-    # o XML do Moodle carrega a resposta correta internamente (necessária
-    # para a correção automática), então a opção com/sem solução não se
-    # aplica a este formato
     exams2moodle(
-      selecionados,
+      arquivos_temp,
       n    = n_versoes,
       dir  = dir_saida,
       name = "prova",
       encoding = "UTF-8"
     )
-    
+
   } else {
     stop("Formato não suportado: ", formato)
   }
-  
+
   resultado$arquivos_gerados <- list.files(dir_saida, full.names = TRUE)
   resultado
 }
