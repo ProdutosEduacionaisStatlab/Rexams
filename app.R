@@ -35,8 +35,9 @@ ui <- fluidPage(
       hr(),
       h4("Gerar nova questão com IA"),
 
-      selectInput("ia_disciplina", "Disciplina desta questão:",
-                  choices = list_disciplinas()),
+      selectizeInput("ia_disciplina", "Disciplina desta questão:",
+                  choices = list_disciplinas(),
+                  options = list(create = TRUE)),
 
       uiOutput("ia_tema_ui"),
 
@@ -59,7 +60,7 @@ ui <- fluidPage(
 
       actionButton("ia_gerar", "Gerar questão com IA", class = "btn-info")
     ),
-    
+
     mainPanel(
       h4("Status"),
       verbatimTextOutput("status"),
@@ -74,11 +75,11 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-  
+
   output$tema_ui <- renderUI({
     req(input$disciplina)
     temas <- list_dificuldades(input$disciplina)
-    
+
     checkboxGroupInput(
       "tema",
       "1b. Tema:",
@@ -86,23 +87,30 @@ server <- function(input, output, session) {
       selected = temas
     )
   })
-  
+
+  output$ia_tema_ui <- renderUI({
+    req(input$ia_disciplina)
+    temas <- list_dificuldades(input$ia_disciplina)
+    selectizeInput("ia_tema", "Tema:", choices = temas, options = list(create = TRUE))
+  })
+
   questoes_filtradas <- reactive({
     req(input$disciplina, input$tema)
-    list_questoes(input$disciplina, input$tema)
+    filtrar_questoes(input$disciplina, input$tema)
   })
-  
+
   output$preview_questoes <- renderTable({
-    arquivos <- questoes_filtradas()
-    data.frame(arquivo = basename(arquivos))
-  })
-  
+    df <- questoes_filtradas()
+    if (nrow(df) == 0) return(data.frame(Status = "Nenhuma questão encontrada."))
+    data.frame(Questao = df$id)
+      })
+
   resultado_geracao <- eventReactive(input$gerar, {
-    arquivos <- questoes_filtradas()
+    df_questoes <- questoes_filtradas()
     withProgress(message = "Gerando prova(s)...", value = 0.3, {
       res <- tryCatch({
         generate_exam(
-          arquivos    = arquivos,
+          df_questoes = df_questoes,
           n_questoes  = input$n_questoes,
           n_versoes   = input$n_versoes,
           formato     = input$formato,
@@ -136,11 +144,6 @@ server <- function(input, output, session) {
       file.copy(zip_path, file)
     }
   )
-    output$ia_tema_ui <- renderUI({
-    req(input$ia_disciplina)
-    temas <- list_dificuldades(input$ia_disciplina)
-    selectInput("ia_tema", "Tema:", choices = temas)
-  })
 
   questao_gerada <- eventReactive(input$ia_gerar, {
     req(input$ia_disciplina, input$ia_tema)
@@ -195,16 +198,29 @@ server <- function(input, output, session) {
     }
   })
 
-  observeEvent(input$ia_salvar, {
+observeEvent(input$ia_salvar, {
     res <- questao_gerada()
     req(isTRUE(res$ok), input$ia_nome_arquivo)
 
-    pasta_destino <- file.path(EXERCISES_DIR, input$ia_disciplina, input$ia_tema)
-    dir.create(pasta_destino, showWarnings = FALSE, recursive = TRUE)
-    caminho <- file.path(pasta_destino, paste0(input$ia_nome_arquivo, ".Rmd"))
-    writeLines(res$rmd, caminho)
+    # 1. Cria o registro da nova questão no formato do JSON
+    novo_registro <- data.frame(
+      id = input$ia_nome_arquivo,
+      disciplina = input$ia_disciplina,
+      tema = input$ia_tema,
+      conteudo_rmd = res$rmd,
+      stringsAsFactors = FALSE
+    )
 
-    showNotification(paste("Questão salva em", caminho), type = "message")
+    # 2. Lê o banco atual
+    banco_atual <- ler_banco()
+
+    # 3. Anexa a nova questão ao final do banco
+    banco_atualizado <- rbind(banco_atual, novo_registro)
+
+    # 4. Sobrescreve o arquivo JSON com os dados atualizados
+    jsonlite::write_json(banco_atualizado, ARQUIVO_BANCO, pretty = TRUE, auto_unbox = TRUE)
+
+    showNotification(paste("Questão", input$ia_nome_arquivo, "adicionada ao JSON!"), type = "message")
   })
 }
 
