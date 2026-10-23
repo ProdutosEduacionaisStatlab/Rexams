@@ -33,7 +33,7 @@ ui <- fluidPage(
       br(), br(),
       downloadButton("baixar", "Baixar Prova + Gabarito"),
       hr(),
-      h4("Gerar nova questão com IA"),
+      h4("Converter questão para o banco (IA)"),
 
       selectizeInput("ia_disciplina", "Disciplina desta questão:",
                   choices = list_disciplinas(),
@@ -58,7 +58,7 @@ ui <- fluidPage(
                  accept = c(".pdf", ".docx"))
       ),
 
-      actionButton("ia_gerar", "Gerar questão com IA", class = "btn-info")
+      actionButton("ia_gerar", "Converter e parametrizar", class = "btn-info")
     ),
 
     mainPanel(
@@ -158,21 +158,29 @@ server <- function(input, output, session) {
     }
 
     withProgress(message = "Gerando questão com a IA...", value = 0.3, {
+      texto_ia <- NULL  # último texto devolvido pela IA (mostrado se der erro)
       res <- tryCatch({
         prompt <- montar_prompt_questao(texto_base, input$ia_disciplina, input$ia_tema)
         bruto  <- chamar_groq(prompt)
+        texto_ia <- bruto
         rmd    <- limpar_resposta_ia(bruto)
+        texto_ia <- rmd
+        if (!nzchar(rmd)) stop("A IA devolveu um .Rmd vazio.")
+        validar_fidelidade(texto_base, rmd)
 
-        # valida se o .Rmd realmente compila antes de oferecer para salvar
+        # valida se o .Rmd compila nos DOIS formatos antes de oferecer para salvar:
+        # HTML e PDF (o PDF é mais rígido e é o formato usado nas provas)
         arquivo_temp <- tempfile(fileext = ".Rmd")
         writeLines(rmd, arquivo_temp)
         dir_teste <- tempfile("teste_ia_")
         dir.create(dir_teste)
         exams::exams2html(arquivo_temp, dir = dir_teste, n = 1)
+        exams::exams2pdf(arquivo_temp, dir = dir_teste, n = 1, name = "teste_pdf",
+                         encoding = "UTF-8", template = template_pdf("exam"))
 
         list(rmd = rmd, ok = TRUE)
       }, error = function(e) {
-        list(erro = conditionMessage(e), ok = FALSE)
+        list(erro = conditionMessage(e), ok = FALSE, bruto = texto_ia)
       })
       incProgress(0.7)
       res
@@ -185,6 +193,9 @@ server <- function(input, output, session) {
       cat(res$rmd)
     } else {
       cat("Erro ao gerar/validar a questão:\n", res$erro)
+      if (!is.null(res$bruto) && nzchar(res$bruto)) {
+        cat("\n\n--- Texto devolvido pela IA ---\n", res$bruto)
+      }
     }
   })
 
@@ -201,6 +212,7 @@ server <- function(input, output, session) {
 observeEvent(input$ia_salvar, {
     res <- questao_gerada()
     req(isTRUE(res$ok), input$ia_nome_arquivo)
+    req(nzchar(trimws(res$rmd)))  # nunca salva questão vazia
 
     # 1. Cria o registro da nova questão no formato do JSON
     novo_registro <- data.frame(
