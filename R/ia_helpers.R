@@ -13,59 +13,175 @@ chamar_groq <- function(prompt) {
     req_headers(Authorization = paste("Bearer", chave)) |>
     req_body_json(list(
       model = GROQ_MODEL,
-      temperature = 0.3,
-      max_tokens = 2048,
+      temperature = 0,
+      max_completion_tokens = 8192,
+      reasoning_effort = "low",
       messages = list(list(role = "user", content = prompt))
     )) |>
     req_perform()
 
   corpo <- resp_body_json(resposta)
-  corpo$choices[[1]]$message$content
+  escolha <- corpo$choices[[1]]
+  texto <- escolha$message$content
+  if (is.null(texto) || !nzchar(trimws(texto))) {
+    stop("A IA devolveu resposta vazia (finish_reason = ", escolha$finish_reason,
+        "). Aumente max_completion_tokens ou reduza reasoning_effort.")
+  }
+  texto
 }
 
 #' Monta o prompt que ensina a IA a escrever no formato do R/Exams
 montar_prompt_questao <- function(descricao, disciplina, tema) {
+  regras <- r"---(
+Você NÃO cria questões. Você apenas CONVERTE uma questão já existente para o formato R/Exams (.Rmd) e a PARAMETRIZA, para que o R sorteie números diferentes em cada prova.
+
+=== REGRAS (siga todas) ===
+1. FIDELIDADE: mantenha o texto do enunciado exatamente como foi dado. Não reescreva, não resuma, não acrescente contexto, não mude a ordem. A única alteração permitida no texto é trocar números por código R inline.
+2. PARAMETRIZAÇÃO: troque por variáveis todo número que, se mudasse, mudaria a resposta (dados, quantidades, medidas, taxas, coeficientes). Declare o sorteio no chunk R do topo, com sample(), usando faixas parecidas com os valores originais. Em listas de dados, sorteie o vetor inteiro e mostre no texto com `r paste(dados, collapse = ", ")`.
+3. NÃO parametrize números que fazem parte do enunciado e não mudam a resposta: rótulos de itens (a, b, c), "2º grau", expoentes fixos da fórmula, datas históricas, nomes. NÃO parametrize constantes físicas ou químicas (massa atômica, aceleração da gravidade, número de Avogadro, pi, etc.): elas são fatos e não podem ser sorteadas.
+4. GABARITO CALCULADO: nunca escreva o resultado como número fixo. Calcule em R no chunk do topo (ex.: media <- mean(dados)) e use a variável na Solution e no exsolution.
+5. Sorteie de forma que a resposta fique bem definida (sem empates ambíguos, sem divisão por zero, sem resultados absurdos).
+6. Se a questão não tem números a parametrizar (ex.: textos de humanas, ou questões que só usam constantes), apenas converta para .Rmd sem chunk de sorteio.
+7. Tipo: use 'schoice' se o enunciado já traz alternativas; 'num' se pede um único valor numérico; 'cloze' (extype: cloze, exclozetype: num|num|...) se há vários itens numéricos (a, b, c...); 'string' se a resposta é um texto.
+8. Em schoice, escreva a alternativa CORRETA em primeiro lugar, calcule as erradas a partir das variáveis (todas diferentes entre si e diferentes da correta) e use exshuffle: TRUE. O exsolution é binário, com exatamente um dígito por alternativa (a correta é 1 e vem primeiro, ex.: 10000). Se as alternativas forem textos, mantenha-as fixas, também com a correta primeiro.
+9. Em schoice, a Answerlist da Solution deve ter EXATAMENTE o mesmo número de itens da Answerlist da Question (um "Correto." e os demais "Incorreto.").
+10. Em num e cloze, nunca crie Answerlist de alternativas; no cloze a Answerlist da Question só descreve cada item.
+11. MATEMÁTICA: toda fórmula usa cifrão: $x^2$ no texto e $$ ... $$ em bloco. NUNCA use \( \) nem \[ \]. Para média, use $\bar{x}$; para letras gregas e símbolos, use LaTeX ($\mu$, $\sigma$, $\leq$).
+12. DINHEIRO: escreva o cifrão de moeda escapado, como R\$ 10,00, para não ser confundido com fórmula.
+13. Devolva SOMENTE o conteúdo do .Rmd, sem ``` envolvendo a resposta e sem comentário. Não coloque linhas de ==== no final.
+
+=== EXEMPLO NUM (convertido de: "Calcule a soma de 12 e 7.") ===
+```{r, echo = FALSE, results = "hide"}
+a <- sample(5:30, 1)
+b <- sample(5:30, 1)
+resultado <- a + b
+```
+
+Question
+========
+Calcule a soma de `r a` e `r b`.
+
+Solution
+========
+`r a` + `r b` = `r resultado`.
+
+Meta-information
+================
+exname: soma
+extype: num
+exsolution: `r resultado`
+extol: 0.01
+
+=== EXEMPLO SCHOICE (convertido de: "Um carro percorre 240 km em 4 horas. Qual é a velocidade média? A) 40 B) 50 C) 60 D) 70 E) 80") ===
+```{r, echo = FALSE, results = "hide"}
+v <- sample(c(40, 50, 60, 70, 80), 1)
+t <- sample(2:5, 1)
+d <- v * t
+alternativas <- v + c(0, -10, 10, 20, -20)
+```
+
+Question
+========
+Um carro percorre `r d` km em `r t` horas, em velocidade constante. Qual é a velocidade média, em km/h?
+
+Answerlist
+----------
+* `r alternativas[1]`
+* `r alternativas[2]`
+* `r alternativas[3]`
+* `r alternativas[4]`
+* `r alternativas[5]`
+
+Solution
+========
+A velocidade média é `r d` / `r t` = `r v` km/h.
+
+Answerlist
+----------
+* Correto.
+* Incorreto.
+* Incorreto.
+* Incorreto.
+* Incorreto.
+
+Meta-information
+================
+exname: velocidade_media
+extype: schoice
+exsolution: 10000
+exshuffle: TRUE
+
+=== EXEMPLO CLOZE (convertido de uma questão com média e mediana de uma lista) ===
+```{r, echo = FALSE, results = "hide"}
+dados <- sample(1:6, 10, replace = TRUE)
+media <- mean(dados)
+mediana <- median(dados)
+```
+
+Question
+========
+Foram registradas as horas diárias de uso da internet: `r paste(dados, collapse = ", ")`.
+
+Answerlist
+----------
+* Qual é a média?
+* Qual é a mediana?
+
+Solution
+========
+Média = `r media`; mediana = `r mediana`.
+
+Meta-information
+================
+exname: horas_internet
+extype: cloze
+exclozetype: num|num
+exsolution: `r paste(media, mediana, sep = "|")`
+extol: 0.01
+)---"
+
+
   paste0(
-    "Você é um programador especialista em criar questões no formato R/Exams (arquivo .Rmd).\n",
-    "Gere o conteúdo exato do arquivo .Rmd. Escolha o formato: 'schoice', 'num' ou 'string'.\n\n",
-
-    "=== REGRAS ===\n",
-    "1. A tag 'exsolution' no Meta-information é OBRIGATÓRIA PARA TODOS OS TIPOS.\n",
-    "2. Múltipla escolha (schoice): Use a seção 'Answerlist' (com traços ---------). O 'exsolution' deve ser binário (ex: 1000) com o mesmo número de itens da lista.\n",
-    "3. Numérica (num) e Aberta (string): NUNCA crie 'Answerlist'. Para num, o exsolution é o número exato e adicione extol. Para string, o exsolution é nil.\n",
-    "4. NUNCA adicione linhas de sinais de igual (====) no final do arquivo. Retorne APENAS o código puro.\n\n",
-
-    "Regras vitais:\n",
-    "1. A tag 'exsolution' é OBRIGATÓRIA SEMPRE.\n",
-    "2. Para 'schoice' e 'mchoice', exsolution DEVE ser uma sequência de 0s e 1s com o número EXATO de dígitos igual ao número de itens na Answerlist (ex: 10100 para 5 alternativas, onde 1 indica as alternativas corretas).\n",
-    "3. Se escolher 'num' ou 'string', NÃO crie a seção 'Answerlist'.\n",
-    "4. Devolva SOMENTE o conteúdo do arquivo .Rmd, sem markdown (```) e sem texto extra.\n\n",
-    
-    "--- EXEMPLO SCHOICE ---\n",
-    "Question\n========\nQual a capital da França?\n\nAnswerlist\n----------\n* Paris\n* Londres\n\nSolution\n========\nÉ Paris.\n\nAnswerlist\n----------\n* Correto\n* Incorreto\n\nMeta-information\n================\n",
-    "exname: questao_ia\nextype: schoice\nexsolution: 10\nexshuffle: TRUE\n\n",
-
-    "--- EXEMPLO NUM ---\n",
-    "Question\n========\nCalcule 7 x 8.\n\nSolution\n========\nO resultado é 56.\n\nMeta-information\n================\n",
-    "exname: questao_ia\nextype: num\nexsolution: 56\nextol: 0.01\n\n",
-
-    "--- EXEMPLO STRING ---\n",
-    "Question\n========\nO que é fotossíntese?\n\nSolution\n========\nÉ o processo das plantas.\n\nMeta-information\n================\n",
-    "exname: questao_ia\nextype: string\nexsolution: nil\n\n",
-
-    "Gere a questão abaixo:\n\"\"\"\n", descricao, "\n\"\"\"\n\n",
-    "Inclua no Meta-information:\n",
-    "exname: questao_gerada_ia\n",
-    "exsection: ", disciplina, "/", tema, "\n"
+    "Converta e parametrize a questão abaixo para o formato R/Exams (.Rmd).\n",
+    regras, "\n\n",
+    "Questão original:\n\"\"\"\n", descricao, "\n\"\"\"\n\n",
+    "Inclua no Meta-information: exsection: ", disciplina, "/", tema, "\n"
   )
 }
 
 
+validar_fidelidade <- function(original, rmd, minimo = 0.85) {
+  palavras <- function(x) {
+    x <- gsub("`r[^`]*`", " ", x)          # tira código inline
+    x <- gsub("[0-9]+([.,][0-9]+)?", " ", x) # tira números
+    x <- tolower(gsub("[[:punct:]]", " ", x))
+    p <- unlist(strsplit(x, "\\s+"))
+    unique(p[nchar(p) > 2])
+  }
+  po <- palavras(original)
+  if (length(po) == 0) return(invisible(TRUE))
+  frac <- mean(po %in% palavras(rmd))
+  if (frac < minimo) {
+    stop(sprintf("A IA alterou o enunciado (só %.0f%% das palavras originais foram mantidas). Tente novamente.", frac * 100))
+  }
+  invisible(TRUE)
+}
+
+#' Corrige padrões que quebram a compilação do PDF.
+#' (Os caracteres Unicode, como ₂ e μ, são tratados no template LaTeX; ver
+#' template_pdf() em R/helpers.R.)
+normalizar_rmd <- function(texto) {
+  # \( ... \)  ->  $ ... $   (o pandoc não reconhece \( \) como matemática)
+  texto <- gsub("(?s)\\\\\\((.*?)\\\\\\)", "$\\1$", texto, perl = TRUE)
+  # \[ ... \]  ->  $$ ... $$
+  texto <- gsub("(?s)\\\\\\[(.*?)\\\\\\]", "$$\\1$$", texto, perl = TRUE)
+  texto
+}
 
 limpar_resposta_ia <- function(texto) {
-  texto <- gsub("^```(text|r|rmd)?\\n", "", texto)
+  texto <- gsub("^```(text|r|rmd|markdown|md)?\\n", "", texto, ignore.case = TRUE)
   texto <- gsub("```\\s*$", "", texto)
-  trimws(texto)
+  normalizar_rmd(trimws(texto))
 }
 
 extrair_texto_arquivo <- function(caminho, extensao) {
