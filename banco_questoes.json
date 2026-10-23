@@ -9,7 +9,7 @@
     "id": "equacao_primeiro_grau",
     "disciplina": "Matematica",
     "tema": "Dificil",
-    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\nx_sol <- sample(2:12, 1)\na <- sample(2:9, 1)\nb <- sample(1:15, 1)\nc <- a * x_sol + b\n```\n\nQuestion\n========\nResolva a equação $`r a`x + `r b` = `r c`$e informe o valor de$x$.\n\nSolution\n========\nIsolando$x$:$x = (`r c` - `r b`) / `r a` = `r x_sol`$.\n\nMeta-information\n================\nexname: equacao_primeiro_grau\nextype: num\nexsolution: `r x_sol`\nextol: 0\nexsection: Matematica/Dificil"
+    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\nx_sol <- sample(2:12, 1)\na <- sample(2:9, 1)\nb <- sample(1:15, 1)\nc <- a * x_sol + b\n```\n\nQuestion\n========\nResolva a equação $`r a`x + `r b` = `r c`$e informe o valor de$x$.\n\nSolution\n========\nIsolando$x$:$x = (`r c` - `r b`) / `r a` = `r x_sol`$.\n\nMeta-information\n================\nexname: equacao_primeiro_grau\nextype: string\nexsolution: `r x_sol`\nexchars: `r nchar(as.character(x_sol))`\nexsection: Matematica/Dificil"
   },
   {
     "id": "assimetria_distribuicao",
@@ -21,19 +21,19 @@
     "id": "colesterol_desviopadrao",
     "disciplina": "estatistica",
     "tema": "analise_exploratoria",
-    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\nn <- sample(5:7, 1)\nmedia_alvo <- sample(190:210, 1)\nvalores <- round(media_alvo + rnorm(n, 0, 15))\ndp <- round(sd(valores), 2)\nmedia <- round(mean(valores), 1)\n```\n\nQuestion\n========\nEm um ambulatório, foram medidos os níveis de colesterol total (mg/dL) de\n`r n` pacientes em jejum: `r paste(valores, collapse = \", \")`.\n\nCalcule o desvio padrão amostral desses valores (arredonde para 2 casas decimais).\n\nSolution\n========\nA média é `r media` mg/dL. O desvio padrão amostral é calculado como\n$s = \\sqrt{\\frac{\\sum (x_i - \\bar{x})^2}{n-1}}$, resultando em\n$s = `r dp`$ mg/dL.\n\nMeta-information\n================\nexname: desvio_padrao_colesterol\nextype: num\nexsolution: `r dp`\nextol: 0.05\nexsection: Estatistica/AnaliseExploratoria"
+    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\nn <- sample(5:7, 1)\nmedia_alvo <- sample(190:210, 1)\nvalores <- round(media_alvo + rnorm(n, 0, 15))\ndp <- round(sd(valores), 2)\nmedia <- round(mean(valores), 1)\n```\n\nQuestion\n========\nEm um ambulatório, foram medidos os níveis de colesterol total (mg/dL) de\n`r n` pacientes em jejum: `r paste(valores, collapse = \", \")`.\n\nCalcule o desvio padrão amostral desses valores (arredonde para 2 casas decimais).\n\nSolution\n========\nA média é `r media` mg/dL. O desvio padrão amostral é calculado como\n$s = \\sqrt{\\frac{\\sum (x_i - \\bar{x})^2}{n-1}}$, resultando em\n$s = `r dp`$ mg/dL.\n\nMeta-information\n================\nexname: desvio_padrao_colesterol\nextype: string\nexsolution: `r dp`\nexchars: `r nchar(as.character(dp))`\nexsection: Estatistica/AnaliseExploratoria"
   },
   {
     "id": "media",
     "disciplina": "estatistica",
     "tema": "facil",
-    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\nvals <- sample(1:30, 4)\nmedia <- round(mean(vals), 2)\n```\n\nQuestion\n========\nConsidere os valores `r paste(vals, collapse = \", \")`. Qual é a média aritmética desse conjunto?\n\nSolution\n========\nA média é a soma dos valores dividida pela quantidade: $(`r paste(vals, collapse = \" + \")`) / `r length(vals)` = `r media`$.\n\nMeta-information\n================\nexname: media_aritmetica\nextype: num\nexsolution: `r media`\nextol: 0.05\nexsection: Estatistica/Facil"
+    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\nvals <- sample(1:30, 4)\nmedia <- round(mean(vals), 2)\n```\n\nQuestion\n========\nConsidere os valores `r paste(vals, collapse = \", \")`. Qual é a média aritmética desse conjunto?\n\nSolution\n========\nA média é a soma dos valores dividida pela quantidade: $(`r paste(vals, collapse = \" + \")`) / `r length(vals)` = `r media`$.\n\nMeta-information\n================\nexname: media_aritmetica\nextype: string\nexsolution: `r media`\nexchars: `r nchar(as.character(media))`\nexsection: Estatistica/Facil"
   },
   {
     "id": "ic_media_imc",
     "disciplina": "estatistica",
     "tema": "inferencia",
-    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\nn <- sample(36:64, 1)\nmedia <- round(sample(220:280, 1) / 10, 1)\ndp <- round(sample(30:55, 1) / 10, 1)\nerro_padrao <- dp / sqrt(n)\nic_inferior <- round(media - 1.96 * erro_padrao, 2)\nic_superior <- round(media + 1.96 * erro_padrao, 2)\n```\n\nQuestion\n========\nEm uma amostra aleatória de `r n` pacientes adultos de uma clínica, o Índice\nde Massa Corporal (IMC) médio foi `r media` kg/m², com desvio padrão de\n`r dp` kg/m². Assumindo que a amostra é grande o suficiente para usar a\naproximação normal, calcule o **limite inferior** do intervalo de confiança\nde 95% para a média populacional do IMC (use $z = 1{,}96$; arredonde para\n2 casas decimais).\n\nSolution\n========\nO erro padrão da média é $EP = s / \\sqrt{n} = `r dp` / \\sqrt{`r n`} = `r round(erro_padrao, 3)`$.\n\nO limite inferior do IC 95% é dado por\n$\\bar{x} - 1{,}96 \\times EP = `r media` - 1{,}96 \\times `r round(erro_padrao, 3)` = `r ic_inferior`$ kg/m².\n\n(O limite superior seria `r ic_superior` kg/m².)\n\nMeta-information\n================\nexname: ic_media_imc\nextype: num\nexsolution: `r ic_inferior`\nextol: 0.1\nexsection: Estatistica/Inferencia"
+    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\nn <- sample(36:64, 1)\nmedia <- round(sample(220:280, 1) / 10, 1)\ndp <- round(sample(30:55, 1) / 10, 1)\nerro_padrao <- dp / sqrt(n)\nic_inferior <- round(media - 1.96 * erro_padrao, 2)\nic_superior <- round(media + 1.96 * erro_padrao, 2)\n```\n\nQuestion\n========\nEm uma amostra aleatória de `r n` pacientes adultos de uma clínica, o Índice\nde Massa Corporal (IMC) médio foi `r media` kg/m², com desvio padrão de\n`r dp` kg/m². Assumindo que a amostra é grande o suficiente para usar a\naproximação normal, calcule o **limite inferior** do intervalo de confiança\nde 95% para a média populacional do IMC (use $z = 1{,}96$; arredonde para\n2 casas decimais).\n\nSolution\n========\nO erro padrão da média é $EP = s / \\sqrt{n} = `r dp` / \\sqrt{`r n`} = `r round(erro_padrao, 3)`$.\n\nO limite inferior do IC 95% é dado por\n$\\bar{x} - 1{,}96 \\times EP = `r media` - 1{,}96 \\times `r round(erro_padrao, 3)` = `r ic_inferior`$ kg/m².\n\n(O limite superior seria `r ic_superior` kg/m².)\n\nMeta-information\n================\nexname: ic_media_imc\nextype: string\nexsolution: `r ic_inferior`\nexchars: `r nchar(as.character(ic_inferior))`\nexsection: Estatistica/Inferencia"
   },
   {
     "id": "interpretacao_pvalor",
@@ -45,7 +45,7 @@
     "id": "coeficiente_dose_resposta",
     "disciplina": "estatistica",
     "tema": "regressao",
-    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\ndose <- c(5, 10, 15, 20, 25)\nbeta1_true <- sample(2:5, 1)\nbeta0_true <- sample(60:80, 1)\nresposta <- round(beta0_true + beta1_true * dose + rnorm(5, 0, 3), 1)\nmodelo <- lm(resposta ~ dose)\ncoef_dose <- round(coef(modelo)[2], 2)\n```\n\nQuestion\n========\nUm estudo farmacológico avaliou a redução da pressão arterial diastólica\n(mmHg) em função da dose de um medicamento (mg), obtendo os seguintes\npares dose–resposta:\n\nDose (mg): `r paste(dose, collapse = \", \")`\n\nRedução da PA diastólica (mmHg): `r paste(resposta, collapse = \", \")`\n\nAjustando um modelo de regressão linear simples (Resposta = $\\beta_0$ +\n$\\beta_1$ × Dose), qual é o valor estimado do coeficiente angular\n$\\beta_1$ (arredonde para 2 casas decimais)?\n\nSolution\n========\nAjustando o modelo de regressão linear pelo método dos mínimos quadrados,\no coeficiente angular estimado é $\\hat{\\beta}_1 = `r coef_dose`$ mmHg por\nmg de dose, ou seja, a cada aumento de 1 mg na dose, espera-se uma\nredução adicional de aproximadamente `r coef_dose` mmHg na pressão\ndiastólica, dentro da faixa de doses estudada.\n\nMeta-information\n================\nexname: coeficiente_regressao_dose\nextype: num\nexsolution: `r coef_dose`\nextol: 0.3\nexsection: Estatistica/Regressao"
+    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\ndose <- c(5, 10, 15, 20, 25)\nbeta1_true <- sample(2:5, 1)\nbeta0_true <- sample(60:80, 1)\nresposta <- round(beta0_true + beta1_true * dose + rnorm(5, 0, 3), 1)\nmodelo <- lm(resposta ~ dose)\ncoef_dose <- round(coef(modelo)[2], 2)\n```\n\nQuestion\n========\nUm estudo farmacológico avaliou a redução da pressão arterial diastólica\n(mmHg) em função da dose de um medicamento (mg), obtendo os seguintes\npares dose–resposta:\n\nDose (mg): `r paste(dose, collapse = \", \")`\n\nRedução da PA diastólica (mmHg): `r paste(resposta, collapse = \", \")`\n\nAjustando um modelo de regressão linear simples (Resposta = $\\beta_0$ +\n$\\beta_1$ × Dose), qual é o valor estimado do coeficiente angular\n$\\beta_1$ (arredonde para 2 casas decimais)?\n\nSolution\n========\nAjustando o modelo de regressão linear pelo método dos mínimos quadrados,\no coeficiente angular estimado é $\\hat{\\beta}_1 = `r coef_dose`$ mmHg por\nmg de dose, ou seja, a cada aumento de 1 mg na dose, espera-se uma\nredução adicional de aproximadamente `r coef_dose` mmHg na pressão\ndiastólica, dentro da faixa de doses estudada.\n\nMeta-information\n================\nexname: coeficiente_regressao_dose\nextype: string\nexsolution: `r coef_dose`\nexchars: `r nchar(as.character(coef_dose))`\nexsection: Estatistica/Regressao"
   },
   {
     "id": "interpretacao_r2",
@@ -63,7 +63,7 @@
     "id": "nova_questao",
     "disciplina": "Matematica",
     "tema": "Dificil",
-    "conteudo_rmd": "Question\n========\nUm armazém possui 6 caixas de mercadorias. Os pesos das caixas são (em kg): 12.3, 27.8, 34.5, 19.6, 42.1 e 23.9. Calcule o desvio padrão amostral desses pesos.\n\nSolution\n========\nO desvio padrão amostral é aproximadamente 10.63 kg.\n\nMeta-information\n================\nexname: questao_gerada_ia\nexsection: Matematica/Dificil\nextype: num\nexsolution: 10.6285\nextol: 0.01"
+    "conteudo_rmd": "Question\n========\nUm armazém possui 6 caixas de mercadorias. Os pesos das caixas são (em kg): 12.3, 27.8, 34.5, 19.6, 42.1 e 23.9. Calcule o desvio padrão amostral desses pesos.\n\nSolution\n========\nO desvio padrão amostral é aproximadamente 10.63 kg.\n\nMeta-information\n================\nexname: questao_gerada_ia\nexsection: Matematica/Dificil\nextype: string\nexsolution: 10.6285\nexchars: 7"
   },
   {
     "id": "nova_questao",
@@ -87,6 +87,48 @@
     "id": "Questão de Razão e Proporção",
     "disciplina": "Matematica",
     "tema": "Facil",
-    "conteudo_rmd": "Question\n========\nQuatro pedreiros constroem um muro em 12 dias. Quantos dias levarão seis pedreiros para construir o mesmo muro, assumindo que o trabalho é proporcional ao número de pedreiros?\n\nAnswerlist\n----------\n* 8 dias\n* 9 dias\n* 10 dias\n* 12 dias\n\nSolution\n========\nComo 4 pedreiros levam 12 dias, o trabalho total é 4 × 12 = 48 pedreiro‑dias. Com 6 pedreiros, 48 ÷ 6 = 8 dias.\n\nMeta-information\n================\nexname: questao_gerada_ia\nexsection: Matematica/Facil\nextype: schoice\nexsolution: 1000\nexshuffle: TRUE"
+    "conteudo_rmd": "Question\n========\nQuatro pedreiros constroem um muro em 12 dias. Quantos dias levarão seis pedreiros para construir o mesmo muro, assumindo que o trabalho é proporcional ao número de pedreiros?\n\nAnswerlist\n----------\n* 8 dias\n* 9 dias\n* 10 dias\n* 12 dias\n\nSolution\n========\nComo 4 pedreiros levam 12 dias, o trabalho total é 4 × 12 = 48 pedreiro‑dias. Com 6 pedreiros, 48 ÷ 6 = 8 dias.\n\nMeta-information\n================\nexname: questao_gerada_ia\nexsection: Matematica/Facil\nextype: schoice\nexsolution: 1000\nexshuffle: TRUE"
+  },
+  {
+    "id": "fisica_calorimetria_q",
+    "disciplina": "Fisica",
+    "tema": "Termodinamica",
+    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\nm <- sample(200:500, 1)\nc_esp <- 0.11\nti <- sample(20:30, 1)\ntf <- sample(70:90, 1)\nq <- m * c_esp * (tf - ti)\n```\n\nQuestion\n========\nUm bloco de ferro com massa de `r m` g encontra-se inicialmente a uma temperatura de `r ti` °C. Sabendo que o calor específico do ferro é de `r c_esp` cal/(g·°C), calcule a quantidade de calor (em calorias) que o bloco deve receber para atingir a temperatura de `r tf` °C.\n\nSolution\n========\nA quantidade de calor sensível é calculada pela fórmula $Q = m \\cdot c \\cdot \\Delta T$.\nSubstituindo os valores:\n$Q = `r m` \\cdot `r c_esp` \\cdot (`r tf` - `r ti`)$\n$Q = `r m` \\cdot `r c_esp` \\cdot `r tf - ti` = `r q`$ cal.\n\nMeta-information\n================\nexname: fisica_calorimetria\nextype: string\nexsolution: `r q`\nexchars: `r nchar(as.character(q))`\nexsection: Fisica/Termodinamica"
+  },
+  {
+    "id": "matematica_distancia_pontos",
+    "disciplina": "Matematica",
+    "tema": "Geometria_Analitica",
+    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\nx1 <- sample(1:5, 1)\ny1 <- sample(1:5, 1)\nx2 <- sample(6:10, 1)\ny2 <- sample(6:10, 1)\nd2 <- (x2 - x1)^2 + (y2 - y1)^2\nd <- round(sqrt(d2), 2)\n```\n\nQuestion\n========\nNo plano cartesiano, considere os pontos $A(`r x1`, `r y1`)$ e $B(`r x2`, `r y2`)$. Calcule a distância entre os pontos A e B. (Arredonde para duas casas decimais, se necessário).\n\nSolution\n========\nA distância entre dois pontos é dada por $d = \\sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2}$.\n$d = \\sqrt{(`r x2` - `r x1`)^2 + (`r y2` - `r y1`)^2}$\n$d = \\sqrt{(`r x2 - x1`)^2 + (`r y2 - y1`)^2}$\n$d = \\sqrt{`r (x2 - x1)^2` + `r (y2 - y1)^2`} = \\sqrt{`r d2`} \\approx `r d`$.\n\nMeta-information\n================\nexname: distancia_pontos\nextype: string\nexsolution: `r d`\nexchars: `r nchar(as.character(d))`\nexsection: Matematica/Geometria_Analitica"
+  },
+  {
+    "id": "quimica_concentracao_comum",
+    "disciplina": "Quimica",
+    "tema": "Solucoes",
+    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\nmassa <- sample(10:50, 1)\nvol_ml <- sample(c(200, 250, 400, 500, 800), 1)\nvol_l <- vol_ml / 1000\nconcentracao <- round(massa / vol_l, 2)\n```\n\nQuestion\n========\nUm técnico de laboratório preparou uma solução dissolvendo `r massa` g de cloreto de sódio (NaCl) em água suficiente para produzir `r vol_ml` mL de solução. Qual é a concentração comum dessa solução em g/L?\n\nSolution\n========\nA concentração comum é a razão entre a massa do soluto (em gramas) e o volume da solução (em litros): $C = \\frac{m}{V}$.\nPrimeiro, convertemos o volume para litros: $`r vol_ml` \\text{ mL} = `r vol_l` \\text{ L}$.\n$C = \\frac{`r massa`}{`r vol_l`} = `r concentracao` \\text{ g/L}$.\n\nMeta-information\n================\nexname: concentracao_comum\nextype: string\nexsolution: `r concentracao`\nexchars: `r nchar(as.character(concentracao))`\nexsection: Quimica/Solucoes"
+  },
+  {
+    "id": "estatistica_probabilidade_uniao",
+    "disciplina": "Estatistica",
+    "tema": "Probabilidade",
+    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\npA <- sample(15:25, 1)\npB <- sample(30:45, 1)\np_uniao <- pA + pB\n\nerr1 <- pA * pB / 100\nerr2 <- abs(pA - pB)\nerr3 <- pA + pB - (pA * pB / 100)\nerr4 <- 100 - p_uniao\n\nalts <- c(p_uniao, err1, err2, err3, err4)\nordem <- sample(1:5)\nalts_emb <- alts[ordem]\ngabarito <- as.numeric(ordem == 1)\nexsol <- paste(gabarito, collapse = \"\")\n```\n\nQuestion\n========\nEm um experimento aleatório, os eventos A e B são mutuamente exclusivos (disjuntos). Sabe-se que a probabilidade de ocorrência do evento A é de `r pA`% e a do evento B é de `r pB`%. Qual é a probabilidade de ocorrer o evento A ou o evento B?\n\nAnswerlist\n----------\n* `r alts_emb[1]`%\n* `r alts_emb[2]`%\n* `r alts_emb[3]`%\n* `r alts_emb[4]`%\n* `r alts_emb[5]`%\n\nSolution\n========\nPara eventos mutuamente exclusivos, a probabilidade da união (A ou B) é a soma das probabilidades individuais: $P(A \\cup B) = P(A) + P(B)$.\n$P(A \\cup B) = `r pA`\\% + `r pB`\\% = `r p_uniao`\\%$.\n\nAnswerlist\n----------\n* `r ifelse(gabarito[1], \"Correto.\", \"Incorreto.\")`\n* `r ifelse(gabarito[2], \"Correto.\", \"Incorreto.\")`\n* `r ifelse(gabarito[3], \"Correto.\", \"Incorreto.\")`\n* `r ifelse(gabarito[4], \"Correto.\", \"Incorreto.\")`\n* `r ifelse(gabarito[5], \"Correto.\", \"Incorreto.\")`\n\nMeta-information\n================\nexname: probabilidade_mutuamente_exclusivos\nextype: schoice\nexsolution: `r exsol`\nexshuffle: FALSE\nexsection: Estatistica/Probabilidade"
+  },
+  {
+    "id": "matematica_determinante_2x2",
+    "disciplina": "Matematica",
+    "tema": "Algebra_Linear",
+    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\na11 <- sample(2:7, 1)\na12 <- sample(-5:-1, 1)\na21 <- sample(1:4, 1)\na22 <- sample(3:8, 1)\ndet <- (a11 * a22) - (a12 * a21)\n```\n\nQuestion\n========\nConsidere a matriz quadrada de ordem 2 dada por:\n$A = \\begin{bmatrix} `r a11` & `r a12` \\\\ `r a21` & `r a22` \\end{bmatrix}$\n\nCalcule o determinante da matriz A.\n\nSolution\n========\nO determinante de uma matriz $2 \\times 2$ é calculado pela diferença entre o produto dos elementos da diagonal principal e o produto dos elementos da diagonal secundária.\n$\\det(A) = (`r a11` \\cdot `r a22`) - (`r a12` \\cdot `r a21`)$\n$\\det(A) = (`r a11 * a22`) - (`r a12 * a21`) = `r det`$.\n\nMeta-information\n================\nexname: determinante_2x2\nextype: string\nexsolution: `r det`\nexchars: `r nchar(as.character(det))`\nexsection: Matematica/Algebra_Linear"
+  },
+  {
+    "id": "fisica_dinamica_atrito",
+    "disciplina": "Fisica",
+    "tema": "Mecanica",
+    "conteudo_rmd": "```{r, echo = FALSE, results = \"hide\"}\nmassa <- sample(10:20, 1)\nforca <- sample(100:150, 1)\nmu_c <- sample(c(0.2, 0.25, 0.3, 0.4), 1)\ng <- 10\nfat <- mu_c * massa * g\nacel <- round((forca - fat) / massa, 2)\n```\n\nQuestion\n========\nUm bloco de massa `r massa` kg repousa sobre uma superfície horizontal. Uma força constante de `r forca` N é aplicada horizontalmente sobre o bloco, fazendo-o deslizar. Sabendo que o coeficiente de atrito cinético entre o bloco e a superfície é `r mu_c` e que a aceleração da gravidade é $g = 10 \\text{ m/s}^2$, calcule a aceleração adquirida pelo bloco (em $\\text{m/s}^2$).\n\nSolution\n========\nPrimeiro, calculamos a força de atrito cinético ($F_{at}$):\n$F_{at} = \\mu_c \\cdot N = \\mu_c \\cdot m \\cdot g$\n$F_{at} = `r mu_c` \\cdot `r massa` \\cdot 10 = `r fat` \\text{ N}$.\n\nAplicando a Segunda Lei de Newton (Força Resultante = $m \\cdot a$):\n$F - F_{at} = m \\cdot a$\n$`r forca` - `r fat` = `r massa` \\cdot a$\n$`r forca - fat` = `r massa` \\cdot a$\n$a = \\frac{`r forca - fat`}{`r massa`} = `r acel` \\text{ m/s}^2$.\n\nMeta-information\n================\nexname: dinamica_forca_atrito\nextype: string\nexsolution: `r acel`\nexchars: `r nchar(as.character(acel))`\nexsection: Fisica/Mecanica"
+  },
+  {
+    "id": "Cálculo da Massa Molar da Água (H₂O)",
+    "disciplina": "Quimica",
+    "tema": "Solucoes",
+    "conteudo_rmd": "Question\n========\nO gás oxigênio (O₂) é essencial para a respiração dos seres vivos. Qual é a massa molecular do O₂, sabendo que a massa atômica do oxigênio é 16 u?\n\nA) 8 u  \nB) 16 u  \nC) 32 u  \nD) 48 u  \nE) 64 u  \n\nSolution\n========\nA massa molecular do O₂ é `32 u`.\n\nMeta-information\n================\nexname: massa_o2  \nextype: schoice  \nexsolution: 00100  \nexchars: 4  \nexsection: Quimica/Solucoes"
   }
 ]
