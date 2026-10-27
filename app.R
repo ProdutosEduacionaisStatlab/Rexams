@@ -476,6 +476,8 @@ server <- function(input, output, session) {
   
   output$status <- renderPrint({
     res <- resultado_geracao()
+    if (length(res$estaticas)){
+      cat("Atenção, sem sorteio:", paste(res$estaticas, collapse = ", "), "\n")}
     if (!is.null(res$erro)) {
       cat("Erro:", res$erro)
     } else {
@@ -517,6 +519,7 @@ server <- function(input, output, session) {
         texto_ia <- rmd
         if (!nzchar(rmd)) stop("A IA devolveu um .Rmd vazio.")
         validar_fidelidade(texto_base, rmd)
+        validar_parametrizacao(texto_base, rmd)
 
         # valida se o .Rmd compila nos DOIS formatos antes de oferecer para salvar:
         # HTML e PDF (o PDF é mais rígido e é o formato usado nas provas)
