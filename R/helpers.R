@@ -191,6 +191,7 @@ generate_exam <- function(df_questoes, n_questoes, n_versoes, formato = "pdf",
   # Sorteia as questões (linhas do dataframe)
   indices_sorteados <- sample(seq_len(nrow(df_questoes)), n_questoes)
   selecionados <- df_questoes[indices_sorteados, ]
+  estaticas <- selecionados$id[!grepl("sample\\(", selecionados$conteudo_rmd)]
 
   # =================================================================
   # O "Fatiador Temporário": transforma o texto do JSON em arquivos .Rmd
@@ -201,11 +202,10 @@ generate_exam <- function(df_questoes, n_questoes, n_versoes, formato = "pdf",
   arquivos_temp <- c()
   for (i in seq_len(nrow(selecionados))) {
     nome_arquivo <- file.path(dir_rmd_temp, paste0("questao_", i, ".Rmd"))
-    writeLines(selecionados$conteudo_rmd[i], nome_arquivo)
+    writeLines(normalizar_rmd(selecionados$conteudo_rmd[i]), nome_arquivo)
     arquivos_temp <- c(arquivos_temp, nome_arquivo)
   }
-
-  resultado <- list(dir = dir_saida, arquivos_gerados = c())
+  resultado <- list(dir = dir_saida, arquivos_gerados = c(), estaticas = estaticas)
   nome_saida <- if (com_solucao) "prova_gabarito" else "prova"
 
   # O resto continua igual, mas agora usando os `arquivos_temp`
