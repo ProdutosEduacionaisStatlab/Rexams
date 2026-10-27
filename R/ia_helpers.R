@@ -172,6 +172,14 @@ validar_fidelidade <- function(original, rmd, minimo = 0.85) {
   invisible(TRUE)
 }
 
+validar_parametrizacao <- function(original, rmd) {
+  if (grepl("[0-9]", original) &&
+      !(grepl("sample\\(", rmd) && grepl("`r ", rmd, fixed = TRUE))) {
+    stop("A IA não parametrizou a questão (falta sample() ou uso de `r variavel` no texto). Tente novamente.")
+  }
+  invisible(TRUE)
+}
+
 #' Corrige padrões que quebram a compilação do PDF.
 #' (Os caracteres Unicode, como ₂ e μ, são tratados no template LaTeX; ver
 #' template_pdf() em R/helpers.R.)
